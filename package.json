@@ -1,0 +1,55 @@
+{
+  "name": "parse-entities",
+  "version": "0.0.0",
+  "description": "Parse HTML character references: fast, spec-compliant, positional information",
+  "license": "MIT",
+  "keywords": [
+    "parse",
+    "html",
+    "character",
+    "reference",
+    "entity",
+    "entities"
+  ],
+  "files": [
+    "index.js",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "character-entities": "^1.0.0",
+    "character-reference-invalid": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wooorm/parse-entities.git"
+  },
+  "author": "Titus Wormer <tituswormer@gmail.com>",
+  "devDependencies": {
+    "browserify": "^12.0.0",
+    "eslint": "^1.0.0",
+    "esmangle": "^1.0.0",
+    "istanbul": "^0.4.0",
+    "jscs": "^2.0.0",
+    "jscs-jsdoc": "^1.0.0",
+    "mdast": "^2.0.0",
+    "mdast-comment-config": "^1.0.0",
+    "mdast-github": "^1.0.0",
+    "mdast-lint": "^1.0.0",
+    "mdast-slug": "^2.0.0",
+    "mdast-validate-links": "^1.1.1",
+    "mdast-yaml-config": "^1.0.0",
+    "tape": "^4.2.0"
+  },
+  "scripts": {
+    "build-md": "mdast . --quiet  --frail",
+    "build-bundle": "browserify index.js --bare -s parseEntities > parse-entities.js",
+    "build-mangle": "esmangle parse-entities.js > parse-entities.min.js",
+    "build": "npm run build-md && npm run build-bundle && npm run build-mangle",
+    "lint-api": "eslint .",
+    "lint-style": "jscs --reporter inline .",
+    "lint": "npm run lint-api && npm run lint-style",
+    "test-api": "node test.js",
+    "test-coverage": "istanbul cover test.js",
+    "test": "npm run build && npm run lint && npm run test-coverage"
+  }
+}

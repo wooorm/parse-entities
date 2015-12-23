@@ -1,0 +1,19 @@
+{
+  "name": "parse-entities",
+  "version": "0.0.0",
+  "description": "Parse HTML character references: fast, spec-compliant, positional information",
+  "license": "MIT",
+  "keywords": [
+    "parse",
+    "decode",
+    "html",
+    "character",
+    "reference",
+    "entity",
+    "entities"
+  ],
+  "repository": "wooorm/parse-entities",
+  "scripts": [
+    "index.js"
+  ]
+}

@@ -1,0 +1,4 @@
+components/
+coverage/
+parse-entities.js
+parse-entities.min.js
