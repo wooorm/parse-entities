@@ -1,6 +1,6 @@
 {
   "name": "parse-entities",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Parse HTML character references: fast, spec-compliant, positional information",
   "license": "MIT",
   "keywords": [
