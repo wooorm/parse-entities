@@ -13,6 +13,10 @@
     "entities"
   ],
   "repository": "wooorm/parse-entities",
+  "dependencies": {
+    "wooorm/character-entities": "^1.0.0",
+    "wooorm/character-reference-invalid": "^1.0.0"
+  },
   "scripts": [
     "index.js"
   ]
