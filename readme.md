@@ -31,7 +31,7 @@ decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel');
 
 ## API
 
-## parseEntities(value\[, options\])
+## parseEntities(value\[, options])
 
 **Parameters**
 
@@ -71,13 +71,13 @@ decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel');
     *   `reference` ([`Function`](#function-referencevalue-location-source),
         optional) — Reference handler;
 
-    *   `warningContext` ('*', optional)
+    *   `warningContext` (`'*'`, optional)
         — Context used when invoking `warning`;
 
-    *   `textContext` ('*', optional)
+    *   `textContext` (`'*'`, optional)
         — Context used when invoking `text`;
 
-    *   `referenceContext` ('*', optional)
+    *   `referenceContext` (`'*'`, optional)
         — Context used when invoking `reference`.
 
 **Returns**
