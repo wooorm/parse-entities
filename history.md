@@ -2,6 +2,11 @@
 
 <!--lint disable no-multiple-toplevel-headings -->
 
+1.0.2 / 2015-12-29
+==================
+
+*   Fix legacy entity support ([7bf652a](https://github.com/wooorm/parse-entities/commit/7bf652a))
+
 1.0.1 / 2015-12-27
 ==================
 
