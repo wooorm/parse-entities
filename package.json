@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "character-entities": "^1.0.0",
+    "character-entities-legacy": "^1.0.0",
     "character-reference-invalid": "^1.0.0"
   },
   "repository": {

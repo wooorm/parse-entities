@@ -16,7 +16,8 @@
  */
 
 var characterEntities = require('character-entities');
-var characterReferenceInvalid = require('character-reference-invalid');
+var legacy = require('character-entities-legacy');
+var invalid = require('character-reference-invalid');
 
 /*
  * Methods.
@@ -449,11 +450,26 @@ function parse(value, settings) {
                 characters += following;
 
                 /*
-                 * Check if we can match a named reference.
-                 * If so, we cache that as the last viable
-                 * named reference.  This ensures we do not
-                 * need to walk backwards later.
+                 * Check if we can match a legacy named
+                 * reference.  If so, we cache that as the
+                 * last viable named reference.  This
+                 * ensures we do not need to walk backwards
+                 * later.
                  */
+
+                if (
+                    type === NAMED &&
+                    has.call(legacy, characters)
+                ) {
+                    entityCharacters = characters;
+                    entity = legacy[characters];
+                }
+            }
+
+            terminated = at(end) === SEMICOLON;
+
+            if (terminated) {
+                end++;
 
                 if (
                     type === NAMED &&
@@ -462,12 +478,6 @@ function parse(value, settings) {
                     entityCharacters = characters;
                     entity = characterEntities[characters];
                 }
-            }
-
-            terminated = at(end) === SEMICOLON;
-
-            if (terminated) {
-                end++;
             }
 
             diff = 1 + end - start;
@@ -558,7 +568,7 @@ function parse(value, settings) {
                     warning(NUMERIC_PROHIBITED, diff);
 
                     reference = REPLACEMENT;
-                } else if (reference in characterReferenceInvalid) {
+                } else if (reference in invalid) {
                     /*
                      * Trigger a warning when the parsed number
                      * is disallowed, and replace by an
@@ -567,7 +577,7 @@ function parse(value, settings) {
 
                     warning(NUMERIC_DISALLOWED, diff);
 
-                    reference = characterReferenceInvalid[reference];
+                    reference = invalid[reference];
                 } else {
                     /*
                      * Parse the number.

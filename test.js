@@ -565,5 +565,35 @@ test('parseEntities(value)', function (t) {
         'warning': []
     }, 'example #2');
 
+    t.deepEqual(test('I’m &AMPed though'), {
+        'result': 'I’m &ed though',
+        'reference': [
+            ['&', location(1, 5, 4, 1, 9, 8), '&AMP']
+        ],
+        'text': [
+            ['I’m ', location(1, 1, 0, 1, 5, 4)],
+            ['ed though', location(1, 9, 8, 1, 18, 17)]
+        ],
+        'warning': [[
+            'Named character references must be terminated by a semicolon',
+            position(1, 9, 8),
+            1
+        ]]
+    }, 'legacy entity characters');
+
+    t.deepEqual(test('I’m &circled though'), {
+        'result': 'I’m &circled though',
+        'reference': [
+        ],
+        'text': [
+            ['I’m &circled though', location(1, 1, 0, 1, 20, 19)]
+        ],
+        'warning': [[
+            'Named character references cannot be empty',
+            position(1, 6, 5),
+            3
+        ]]
+    }, 'non-legacy entity characters');
+
     t.end();
 });
