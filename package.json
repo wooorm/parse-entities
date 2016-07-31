@@ -12,45 +12,79 @@
     "entities"
   ],
   "files": [
-    "index.js",
-    "LICENSE"
+    "index.js"
   ],
   "dependencies": {
     "character-entities": "^1.0.0",
     "character-entities-legacy": "^1.0.0",
-    "character-reference-invalid": "^1.0.0"
+    "character-reference-invalid": "^1.0.0",
+    "has": "^1.0.1",
+    "is-alphanumerical": "^1.0.0",
+    "is-decimal": "^1.0.0",
+    "is-hexadecimal": "^1.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wooorm/parse-entities.git"
-  },
-  "author": "Titus Wormer <tituswormer@gmail.com>",
+  "repository": "https://github.com/wooorm/parse-entities",
+  "bugs": "https://github.com/wooorm/parse-entities/issues",
+  "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
+  "contributors": [
+    "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
+  ],
   "devDependencies": {
-    "browserify": "^12.0.0",
-    "eslint": "^1.0.0",
+    "browserify": "^13.0.0",
     "esmangle": "^1.0.0",
-    "istanbul": "^0.4.0",
-    "jscs": "^2.0.0",
-    "jscs-jsdoc": "^1.0.0",
-    "remark": "^3.0.0",
-    "remark-comment-config": "^2.0.0",
-    "remark-github": "^2.0.0",
-    "remark-lint": "^2.0.0",
-    "remark-slug": "^3.0.0",
-    "remark-validate-links": "^2.0.0",
-    "remark-yaml-config": "^2.0.0",
-    "tape": "^4.2.0"
+    "nyc": "^7.1.0",
+    "remark-cli": "^1.0.0",
+    "remark-comment-config": "^4.0.0",
+    "remark-github": "^5.0.0",
+    "remark-lint": "^4.0.0",
+    "remark-validate-links": "^4.0.0",
+    "tape": "^4.2.0",
+    "xo": "^0.16.0"
   },
   "scripts": {
     "build-md": "remark . --quiet  --frail",
     "build-bundle": "browserify index.js --bare -s parseEntities > parse-entities.js",
     "build-mangle": "esmangle parse-entities.js > parse-entities.min.js",
     "build": "npm run build-md && npm run build-bundle && npm run build-mangle",
-    "lint-api": "eslint .",
-    "lint-style": "jscs --reporter inline .",
-    "lint": "npm run lint-api && npm run lint-style",
+    "lint": "xo",
     "test-api": "node test.js",
-    "test-coverage": "istanbul cover test.js",
+    "test-coverage": "nyc --reporter lcov tape test.js",
     "test": "npm run build && npm run lint && npm run test-coverage"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "lines": 100,
+    "functions": 100,
+    "branches": 100
+  },
+  "xo": {
+    "space": true,
+    "rules": {
+      "guard-for-in": "off",
+      "no-negated-condition": "off",
+      "max-depth": "off",
+      "max-lines": "off",
+      "complexity": "off"
+    },
+    "ignores": [
+      "parse-entities.js",
+      "parse-entities.min.js"
+    ]
+  },
+  "remarkConfig": {
+    "output": true,
+    "plugins": {
+      "lint": {
+        "heading-increment": false,
+        "list-item-spacing": false,
+        "no-duplicate-headings": false
+      },
+      "github": null,
+      "comment-config": null,
+      "validate-links": null
+    },
+    "settings": {
+      "bullet": "*"
+    }
   }
 }
