@@ -64,7 +64,9 @@
       "no-negated-condition": "off",
       "max-depth": "off",
       "max-lines": "off",
-      "complexity": "off"
+      "complexity": "off",
+      "no-eq-null": "off",
+      "eqeqeq": "off"
     },
     "ignores": [
       "parse-entities.js",

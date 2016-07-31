@@ -177,6 +177,15 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should work when named but warn without terminal semicolon');
 
+  t.deepEqual(test('foo &amp bar', {nonTerminated: false}), {
+    result: 'foo &amp bar',
+    reference: [],
+    text: [
+      ['foo &amp bar', location(1, 1, 0, 1, 13, 12)]
+    ],
+    warning: []
+  }, 'should work if `nonTerminated` is given');
+
   t.deepEqual(test('foo &#123 bar'), {
     result: 'foo { bar',
     reference: [

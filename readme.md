@@ -37,6 +37,10 @@ decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel');
     error);
 *   `attribute` (`boolean`, optional, default: `false`)
     — Whether to parse `value` as an attribute value;
+*   `nonTerminated` (`boolean`, default: `true`)
+    — Whether to allow non-terminated entities, such as `&copycat` to
+    `©cat`.  This behaviour is spec-compliant but can lead to unexpected
+    results;
 *   `warning` ([`Function`][warning], optional)
     — Error handler;
 *   `text` ([`Function`][text], optional)

@@ -50,7 +50,8 @@ var defaults = {
   textContext: null,
   position: {},
   additional: null,
-  attribute: false
+  attribute: false,
+  nonTerminated: true
 };
 
 /* Reference types. */
@@ -114,7 +115,7 @@ function wrapper(value, options) {
   }
 
   for (key in defaults) {
-    settings[key] = options[key] || defaults[key];
+    settings[key] = options[key] == null ? defaults[key] : options[key];
   }
 
   if (settings.position.indent || settings.position.start) {
@@ -133,6 +134,7 @@ function wrapper(value, options) {
  */
 function parse(value, settings) {
   var additional = settings.additional;
+  var nonTerminated = settings.nonTerminated;
   var handleText = settings.text;
   var handleReference = settings.reference;
   var handleWarning = settings.warning;
@@ -284,7 +286,9 @@ function parse(value, settings) {
 
       diff = 1 + end - start;
 
-      if (!characters) {
+      if (!terminated && !nonTerminated) {
+        /* Empty. */
+      } else if (!characters) {
         /* An empty (possible) entity is valid, unless
          * its numeric (thus an ampersand followed by
          * an octothorp). */
