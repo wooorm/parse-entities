@@ -2,6 +2,11 @@
 
 <!--lint disable no-multiple-toplevel-headings -->
 
+1.1.0 / 2016-07-31
+==================
+
+*   Add new `nonTerminated` setting ([`eed693c`](https://github.com/wooorm/parse-entities/commit/eed693c))
+
 1.0.2 / 2015-12-29
 ==================
 
