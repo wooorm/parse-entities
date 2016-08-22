@@ -55,7 +55,7 @@ decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel');
     — Context used when invoking `reference`;
 *   `position` (`Location` or `Position`, optional)
     — Starting `position` of `value`, useful when dealing with values
-    nested in some sort of syntax tree. The default is:
+    nested in some sort of syntax tree.  The default is:
 
     ```json
     {
