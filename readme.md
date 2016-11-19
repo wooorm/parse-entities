@@ -17,13 +17,13 @@ npm install parse-entities
 var decode = require('parse-entities');
 
 decode('alpha &amp bravo');
-// alpha & bravo
+//=> alpha & bravo
 
 decode('charlie &copycat; delta');
-// charlie ©cat; delta
+//=> charlie ©cat; delta
 
 decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel');
-// echo © foxtrot ≠ golf 𝌆 hotel
+//=> echo © foxtrot ≠ golf 𝌆 hotel
 ```
 
 ## API
