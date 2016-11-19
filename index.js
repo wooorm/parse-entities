@@ -1,12 +1,3 @@
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module parse-entities
- * @fileoverview Parse HTML character references: fast, spec-compliant,
- *   positional information.
- */
-
 'use strict';
 
 /* Dependencies. */
@@ -100,12 +91,7 @@ MESSAGES[NUMERIC_DISALLOWED] = NUMERIC_REFERENCE + ' cannot be disallowed';
 MESSAGES[NUMERIC_PROHIBITED] = NUMERIC_REFERENCE + ' cannot be outside the ' +
     'permissible Unicode range';
 
-/**
- * Wrap to ensure clean parameters are given to `parse`.
- *
- * @param {string} value - Value with entities.
- * @param {Object?} [options] - Configuration.
- */
+/* Wrap to ensure clean parameters are given to `parse`. */
 function wrapper(value, options) {
   var settings = {};
   var key;
@@ -126,12 +112,7 @@ function wrapper(value, options) {
   return parse(value, settings);
 }
 
-/**
- * Parse entities.
- *
- * @param {string} value - Value to tokenise.
- * @param {Object?} [settings] - Configuration.
- */
+/* Parse entities. */
 function parse(value, settings) {
   var additional = settings.additional;
   var nonTerminated = settings.nonTerminated;
@@ -419,12 +400,7 @@ function parse(value, settings) {
   /* Return the reduced nodes, and any possible warnings. */
   return result.join(EMPTY);
 
-  /**
-   * Get current position.
-   *
-   * @return {Object} - Positional information of a
-   *   single point.
-   */
+  /* Get current position. */
   function now() {
     return {
       line: line,
@@ -433,15 +409,7 @@ function parse(value, settings) {
     };
   }
 
-  /**
-   * “Throw” a parse-error: a warning.
-   *
-   * @param {number} code - Identifier of reason for
-   *   failing.
-   * @param {number} offset - Offset in characters from
-   *   the current position point at which the
-   *   parse-error ocurred, cannot point past newlines.
-   */
+  /* “Throw” a parse-error: a warning. */
   function parseError(code, offset) {
     var position = now();
 
@@ -451,23 +419,14 @@ function parse(value, settings) {
     handleWarning.call(warningContext, MESSAGES[code], position, code);
   }
 
-  /**
-   * Get character at position.
-   *
-   * @param {number} position - Indice of character in `value`.
-   * @return {string} - Character at `position` in
-   *   `value`.
-   */
+  /* Get character at position. */
   function at(position) {
     return value.charAt(position);
   }
 
-  /**
-   * Flush `queue` (normal text). Macro invoked before
+  /* Flush `queue` (normal text). Macro invoked before
    * each entity and at the end of `value`.
-   *
-   * Does nothing when `queue` is empty.
-   */
+   * Does nothing when `queue` is empty. */
   function flush() {
     if (queue) {
       result.push(queue);
@@ -484,24 +443,13 @@ function parse(value, settings) {
   }
 }
 
-/**
- * Check whether `character` is outside the permissible
- * unicode range.
- *
- * @param {number} code - Value.
- * @return {boolean} - Whether `character` is an
- *   outside the permissible unicode range.
- */
+/* Check if `character` is outside the permissible
+ * unicode range. */
 function isProhibited(code) {
   return (code >= 0xD800 && code <= 0xDFFF) || (code > 0x10FFFF);
 }
 
-/**
- * Check whether `character` is disallowed.
- *
- * @param {number} code - Value.
- * @return {boolean} - Whether `character` is disallowed.
- */
+/* Check if `character` is disallowed. */
 function isWarning(code) {
   if (
     (code >= 0x0001 && code <= 0x0008) ||

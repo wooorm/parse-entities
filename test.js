@@ -1,11 +1,3 @@
-/**
- * @author Titus Wormer
- * @copyright 2015 Titus Wormer
- * @license MIT
- * @module parse-entities
- * @fileoverview Test suite for `parse-entities`.
- */
-
 'use strict';
 
 /* eslint-disable max-params */
@@ -13,36 +5,6 @@
 /* Dependencies. */
 var test = require('tape');
 var decode = require('./');
-
-/**
- * Utility to create a `position`.
- *
- * @param {number} line - Line of `position`.
- * @param {number} column - Column of `position`.
- * @param {number} offset - Offset of `position`.
- * @return {Object} position - Positional information.
- */
-function position(line, column, offset) {
-  return {line: line, column: column, offset: offset};
-}
-
-/**
- * Utility to create a `location`.
- *
- * @param {number} aLine - Line of `start`
- * @param {number} aColumn - Column of `start`.
- * @param {number} aOffset - Offset of `start`.
- * @param {number} bLine - Line of `start`
- * @param {number} bColumn - Column of `start`.
- * @param {number} bOffset - Offset of `start`.
- * @return {Object} location - Location information.
- */
-function location(aLine, aColumn, aOffset, bLine, bColumn, bOffset) {
-  return {
-    start: position(aLine, aColumn, aOffset),
-    end: position(bLine, bColumn, bOffset)
-  };
-}
 
 /* Tests. */
 test('parseEntities(value)', function (t) {
@@ -58,41 +20,7 @@ test('parseEntities(value)', function (t) {
     'example #2 (without options)'
   );
 
-  /**
-   * Test a fixture.
-   *
-   * @param {string} fixture - Fixture to test.
-   * @param {Object?} [options] - Configuration.
-   */
-  function test(fixture, options) {
-    var settings = options || {};
-    var result = {
-      text: [],
-      reference: [],
-      warning: []
-    };
-
-    /**
-     * Construct an `add`er for `type`.
-     *
-     * @param {string} type - Key to push to.
-     */
-    function addFactory(type) {
-      return function () {
-        result[type].push([].slice.apply(arguments));
-      };
-    }
-
-    settings.text = addFactory('text');
-    settings.reference = addFactory('reference');
-    settings.warning = addFactory('warning');
-
-    result.result = decode(fixture, settings);
-
-    return result;
-  }
-
-  t.deepEqual(test('foo &amp; bar'), {
+  t.deepEqual(assert('foo &amp; bar'), {
     result: 'foo & bar',
     reference: [
       ['&', location(1, 5, 4, 1, 10, 9), '&amp;']
@@ -104,7 +32,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on a named reference');
 
-  t.deepEqual(test('foo &#123; bar'), {
+  t.deepEqual(assert('foo &#123; bar'), {
     result: 'foo { bar',
     reference: [
       ['{', location(1, 5, 4, 1, 11, 10), '&#123;']
@@ -116,7 +44,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on a decimal reference');
 
-  t.deepEqual(test('foo &#x123; bar'), {
+  t.deepEqual(assert('foo &#x123; bar'), {
     result: 'foo ģ bar',
     reference: [
       ['ģ', location(1, 5, 4, 1, 12, 11), '&#x123;']
@@ -128,7 +56,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on a hexadecimal reference');
 
-  t.deepEqual(test('&amp; bar'), {
+  t.deepEqual(assert('&amp; bar'), {
     result: '& bar',
     reference: [
       ['&', location(1, 1, 0, 1, 6, 5), '&amp;']
@@ -139,7 +67,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work when the entity is initial');
 
-  t.deepEqual(test('foo &amp;'), {
+  t.deepEqual(assert('foo &amp;'), {
     result: 'foo &',
     reference: [
       ['&', location(1, 5, 4, 1, 10, 9), '&amp;']
@@ -150,7 +78,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work when the entity is final');
 
-  t.deepEqual(test('&amp;&#123;&#x123;'), {
+  t.deepEqual(assert('&amp;&#123;&#x123;'), {
     result: '&{ģ',
     reference: [
       ['&', location(1, 1, 0, 1, 6, 5), '&amp;'],
@@ -161,7 +89,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work for adjacent entities');
 
-  t.deepEqual(test('foo &amp bar'), {
+  t.deepEqual(assert('foo &amp bar'), {
     result: 'foo & bar',
     reference: [
       ['&', location(1, 5, 4, 1, 9, 8), '&amp']
@@ -177,7 +105,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should work when named but warn without terminal semicolon');
 
-  t.deepEqual(test('foo &amp bar', {nonTerminated: false}), {
+  t.deepEqual(assert('foo &amp bar', {nonTerminated: false}), {
     result: 'foo &amp bar',
     reference: [],
     text: [
@@ -186,7 +114,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work if `nonTerminated` is given');
 
-  t.deepEqual(test('foo &#123 bar'), {
+  t.deepEqual(assert('foo &#123 bar'), {
     result: 'foo { bar',
     reference: [
       ['{', location(1, 5, 4, 1, 10, 9), '&#123']
@@ -202,7 +130,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should fail when numerical and without terminal semicolon');
 
-  t.deepEqual(test('Foo &\tbar'), {
+  t.deepEqual(assert('Foo &\tbar'), {
     result: 'Foo &\tbar',
     reference: [],
     text: [
@@ -211,7 +139,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an ampersand followed by a tab');
 
-  t.deepEqual(test('Foo &\nbar'), {
+  t.deepEqual(assert('Foo &\nbar'), {
     result: 'Foo &\nbar',
     reference: [],
     text: [
@@ -220,7 +148,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an ampersand followed by a newline');
 
-  t.deepEqual(test('Foo &\fbar'), {
+  t.deepEqual(assert('Foo &\fbar'), {
     result: 'Foo &\fbar',
     reference: [],
     text: [
@@ -229,7 +157,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an ampersand followed by a form-feed');
 
-  t.deepEqual(test('Foo & bar'), {
+  t.deepEqual(assert('Foo & bar'), {
     result: 'Foo & bar',
     reference: [],
     text: [
@@ -238,7 +166,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an ampersand followed by a space');
 
-  t.deepEqual(test('Foo &<bar'), {
+  t.deepEqual(assert('Foo &<bar'), {
     result: 'Foo &<bar',
     reference: [],
     text: [
@@ -247,7 +175,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an ampersand followed by a `<`');
 
-  t.deepEqual(test('Foo &&bar'), {
+  t.deepEqual(assert('Foo &&bar'), {
     result: 'Foo &&bar',
     reference: [],
     text: [
@@ -262,7 +190,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should work on an ampersand followed by another ampersand');
 
-  t.deepEqual(test('Foo &'), {
+  t.deepEqual(assert('Foo &'), {
     result: 'Foo &',
     reference: [],
     text: [
@@ -271,7 +199,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an ampersand followed by EOF');
 
-  t.deepEqual(test('Foo &"', {additional: '"'}), {
+  t.deepEqual(assert('Foo &"', {additional: '"'}), {
     result: 'Foo &"',
     reference: [],
     text: [
@@ -280,7 +208,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an ampersand followed by an additional character');
 
-  t.deepEqual(test('foo&ampbar', {attribute: true}), {
+  t.deepEqual(assert('foo&ampbar', {attribute: true}), {
     result: 'foo&ampbar',
     reference: [],
     text: [
@@ -289,7 +217,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an attribute #1');
 
-  t.deepEqual(test('foo&amp;bar', {
+  t.deepEqual(assert('foo&amp;bar', {
     attribute: true
   }), {
     result: 'foo&bar',
@@ -303,7 +231,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an attribute #2');
 
-  t.deepEqual(test('foo&amp;', {attribute: true}), {
+  t.deepEqual(assert('foo&amp;', {attribute: true}), {
     result: 'foo&',
     reference: [
       ['&', location(1, 4, 3, 1, 9, 8), '&amp;']
@@ -314,7 +242,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an attribute #3');
 
-  t.deepEqual(test('foo&amp=', {attribute: true}), {
+  t.deepEqual(assert('foo&amp=', {attribute: true}), {
     result: 'foo&amp=',
     reference: [],
     text: [
@@ -327,7 +255,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should work on an attribute #4');
 
-  t.deepEqual(test('foo&amp', {attribute: true}), {
+  t.deepEqual(assert('foo&amp', {attribute: true}), {
     result: 'foo&',
     reference: [
       ['&', location(1, 4, 3, 1, 8, 7), '&amp']
@@ -342,7 +270,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should work on an attribute #5');
 
-  t.deepEqual(test('foo&amplol', {attribute: true}), {
+  t.deepEqual(assert('foo&amplol', {attribute: true}), {
     result: 'foo&amplol',
     reference: [],
     text: [
@@ -351,7 +279,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work on an attribute #6');
 
-  t.deepEqual(test('Foo &#'), {
+  t.deepEqual(assert('Foo &#'), {
     result: 'Foo &#',
     reference: [],
     text: [
@@ -364,7 +292,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should warn when numeric and empty');
 
-  t.deepEqual(test('Foo &='), {
+  t.deepEqual(assert('Foo &='), {
     result: 'Foo &=',
     reference: [],
     text: [
@@ -373,7 +301,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should not warn when empty and not numeric');
 
-  t.deepEqual(test('Foo &bar; baz'), {
+  t.deepEqual(assert('Foo &bar; baz'), {
     result: 'Foo &bar; baz',
     reference: [],
     text: [
@@ -386,7 +314,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should warn when unknown and terminated');
 
-  t.deepEqual(test('Foo &#xD800; baz'), {
+  t.deepEqual(assert('Foo &#xD800; baz'), {
     result: 'Foo \uFFFD baz',
     reference: [
       ['\uFFFD', location(1, 5, 4, 1, 13, 12), '&#xD800;']
@@ -403,7 +331,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should warn when prohibited');
 
-  t.deepEqual(test('Foo &#128; baz'), {
+  t.deepEqual(assert('Foo &#128; baz'), {
     result: 'Foo € baz',
     reference: [
       ['€', location(1, 5, 4, 1, 11, 10), '&#128;']
@@ -419,7 +347,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should warn when invalid');
 
-  t.deepEqual(test('Foo &#xfdee; baz'), {
+  t.deepEqual(assert('Foo &#xfdee; baz'), {
     result: 'Foo \uFDEE baz',
     reference: [
       ['\uFDEE', location(1, 5, 4, 1, 13, 12), '&#xfdee;']
@@ -435,7 +363,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'should warn when disallowed');
 
-  t.deepEqual(test('Foo &#x1F44D; baz'), {
+  t.deepEqual(assert('Foo &#x1F44D; baz'), {
     result: 'Foo 👍 baz',
     reference: [
       ['👍', location(1, 5, 4, 1, 14, 13), '&#x1F44D;']
@@ -447,7 +375,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'should work when resulting in multiple characters');
 
-  t.deepEqual(test('foo&amp;bar\n&not;baz', {
+  t.deepEqual(assert('foo&amp;bar\n&not;baz', {
     position: position(3, 5, 12)
   }), {
     result: 'foo&bar\n¬baz',
@@ -463,7 +391,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'when given positional information');
 
-  t.deepEqual(test('foo&amp;bar\n&not;baz', {
+  t.deepEqual(assert('foo&amp;bar\n&not;baz', {
     position: location(3, 5, 12, 4, 9, 32)
   }), {
     result: 'foo&bar\n¬baz',
@@ -479,7 +407,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'when given location information');
 
-  t.deepEqual(test('foo&amp;bar\n&not;baz', {
+  t.deepEqual(assert('foo&amp;bar\n&not;baz', {
     position: {
       start: position(3, 5, 12),
       end: position(4, 9, 32),
@@ -499,7 +427,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'when given indentation');
 
-  t.deepEqual(test('I’m &notit; though'), {
+  t.deepEqual(assert('I’m &notit; though'), {
     result: 'I’m ¬it; though',
     reference: [
       ['¬', location(1, 5, 4, 1, 9, 8), '&not']
@@ -515,7 +443,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'example #1');
 
-  t.deepEqual(test('I’m &notin; though'), {
+  t.deepEqual(assert('I’m &notin; though'), {
     result: 'I’m ∉ though',
     reference: [
       ['∉', location(1, 5, 4, 1, 12, 11), '&notin;']
@@ -527,7 +455,7 @@ test('parseEntities(value)', function (t) {
     warning: []
   }, 'example #2');
 
-  t.deepEqual(test('I’m &AMPed though'), {
+  t.deepEqual(assert('I’m &AMPed though'), {
     result: 'I’m &ed though',
     reference: [
       ['&', location(1, 5, 4, 1, 9, 8), '&AMP']
@@ -543,7 +471,7 @@ test('parseEntities(value)', function (t) {
     ]]
   }, 'legacy entity characters');
 
-  t.deepEqual(test('I’m &circled though'), {
+  t.deepEqual(assert('I’m &circled though'), {
     result: 'I’m &circled though',
     reference: [],
     text: [
@@ -557,4 +485,42 @@ test('parseEntities(value)', function (t) {
   }, 'non-legacy entity characters');
 
   t.end();
+
+  /* assert a fixture. */
+  function assert(fixture, options) {
+    var settings = options || {};
+    var result = {
+      text: [],
+      reference: [],
+      warning: []
+    };
+
+    /* Construct an `add`er for `type`. */
+    function addFactory(type) {
+      return function () {
+        result[type].push([].slice.apply(arguments));
+      };
+    }
+
+    settings.text = addFactory('text');
+    settings.reference = addFactory('reference');
+    settings.warning = addFactory('warning');
+
+    result.result = decode(fixture, settings);
+
+    return result;
+  }
 });
+
+/* Utility to create a `location`. */
+function location(aLine, aColumn, aOffset, bLine, bColumn, bOffset) {
+  return {
+    start: position(aLine, aColumn, aOffset),
+    end: position(bLine, bColumn, bOffset)
+  };
+}
+
+/* Utility to create a `position`. */
+function position(line, column, offset) {
+  return {line: line, column: column, offset: offset};
+}
