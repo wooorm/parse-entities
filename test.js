@@ -486,7 +486,6 @@ test('parseEntities(value)', function (t) {
 
   t.end();
 
-  /* assert a fixture. */
   function assert(fixture, options) {
     var settings = options || {};
     var result = {

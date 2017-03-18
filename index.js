@@ -208,7 +208,9 @@ function parse(value, settings) {
         continue;
       }
 
-      start = begin = end = index + 1;
+      start = index + 1;
+      begin = start;
+      end = start;
 
       /* Numerical entity. */
       if (following !== OCTOTHORP) {
@@ -230,7 +232,9 @@ function parse(value, settings) {
         }
       }
 
-      entityCharacters = entity = characters = EMPTY;
+      entityCharacters = EMPTY;
+      entity = EMPTY;
+      characters = EMPTY;
       test = TESTS[type];
       end--;
 
