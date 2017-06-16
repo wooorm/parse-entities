@@ -1,7 +1,6 @@
 'use strict';
 
 /* Dependencies. */
-var has = require('has');
 var characterEntities = require('character-entities');
 var legacy = require('character-entities-legacy');
 var invalid = require('character-reference-invalid');
@@ -13,6 +12,7 @@ var alphanumerical = require('is-alphanumerical');
 module.exports = wrapper;
 
 /* Methods. */
+var own = {}.hasOwnProperty;
 var fromCharCode = String.fromCharCode;
 var noop = Function.prototype;
 
@@ -252,7 +252,7 @@ function parse(value, settings) {
          * last viable named reference.  This
          * ensures we do not need to walk backwards
          * later. */
-        if (type === NAMED && has(legacy, characters)) {
+        if (type === NAMED && own.call(legacy, characters)) {
           entityCharacters = characters;
           entity = legacy[characters];
         }
@@ -263,7 +263,7 @@ function parse(value, settings) {
       if (terminated) {
         end++;
 
-        if (type === NAMED && has(characterEntities, characters)) {
+        if (type === NAMED && own.call(characterEntities, characters)) {
           entityCharacters = characters;
           entity = characterEntities[characters];
         }
