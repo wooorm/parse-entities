@@ -34,25 +34,25 @@ decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel');
 
 *   `additional` (`string`, optional, default: `''`)
     — Additional character to accept when following an ampersand (without
-    error);
+    error)
 *   `attribute` (`boolean`, optional, default: `false`)
-    — Whether to parse `value` as an attribute value;
+    — Whether to parse `value` as an attribute value
 *   `nonTerminated` (`boolean`, default: `true`)
     — Whether to allow non-terminated entities, such as `&copycat` to
     `©cat`.  This behaviour is spec-compliant but can lead to unexpected
-    results;
+    results
 *   `warning` ([`Function`][warning], optional)
-    — Error handler;
+    — Error handler
 *   `text` ([`Function`][text], optional)
-    — Text handler;
+    — Text handler
 *   `reference` ([`Function`][reference],
-    optional) — Reference handler;
+    optional) — Reference handler
 *   `warningContext` (`'*'`, optional)
-    — Context used when invoking `warning`;
+    — Context used when invoking `warning`
 *   `textContext` (`'*'`, optional)
-    — Context used when invoking `text`;
+    — Context used when invoking `text`
 *   `referenceContext` (`'*'`, optional)
-    — Context used when invoking `reference`;
+    — Context used when invoking `reference`
 *   `position` (`Location` or `Position`, optional)
     — Starting `position` of `value`, useful when dealing with values
     nested in some sort of syntax tree.  The default is:
@@ -83,11 +83,11 @@ Error handler.
 ###### Parameters
 
 *   `reason` (`string`)
-    — Reason (human-readable) for triggering a parse error;
+    — Reason (human-readable) for triggering a parse error
 *   `position` (`Position`)
-    — Place at which the parse error occurred;
+    — Place at which the parse error occurred
 *   `code` (`number`)
-    — Identifier of reason for triggering a parse error.
+    — Identifier of reason for triggering a parse error
 
 The following codes are used:
 
@@ -111,8 +111,8 @@ Text handler.
 
 ###### Parameters
 
-*   `value` (`string`) — String of content;
-*   `location` (`Location`) — Location at which `value` starts and ends.
+*   `value` (`string`) — String of content
+*   `location` (`Location`) — Location at which `value` starts and ends
 
 ### `function reference(value, location, source)`
 
@@ -124,9 +124,9 @@ Character reference handler.
 
 ###### Parameters
 
-*   `value` (`string`) — Encoded character reference;
-*   `location` (`Location`) — Location at which `value` starts and ends;
-*   `source` (`Location`) — Source of character reference.
+*   `value` (`string`) — Encoded character reference
+*   `location` (`Location`) — Location at which `value` starts and ends
+*   `source` (`Location`) — Source of character reference
 
 ## License
 
