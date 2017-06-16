@@ -94,6 +94,7 @@ MESSAGES[NUMERIC_PROHIBITED] = NUMERIC_REFERENCE + ' cannot be outside the ' +
 /* Wrap to ensure clean parameters are given to `parse`. */
 function wrapper(value, options) {
   var settings = {};
+  var option;
   var key;
 
   if (!options) {
@@ -101,7 +102,8 @@ function wrapper(value, options) {
   }
 
   for (key in defaults) {
-    settings[key] = options[key] == null ? defaults[key] : options[key];
+    option = options[key];
+    settings[key] = option === null || option === undefined ? defaults[key] : option;
   }
 
   if (settings.position.indent || settings.position.start) {

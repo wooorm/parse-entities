@@ -11,6 +11,12 @@
     "entity",
     "entities"
   ],
+  "repository": "wooorm/parse-entities",
+  "bugs": "https://github.com/wooorm/parse-entities/issues",
+  "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
+  "contributors": [
+    "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
+  ],
   "files": [
     "index.js"
   ],
@@ -22,12 +28,6 @@
     "is-decimal": "^1.0.0",
     "is-hexadecimal": "^1.0.0"
   },
-  "repository": "https://github.com/wooorm/parse-entities",
-  "bugs": "https://github.com/wooorm/parse-entities/issues",
-  "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
-  "contributors": [
-    "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
-  ],
   "devDependencies": {
     "browserify": "^14.0.0",
     "esmangle": "^1.0.0",
@@ -60,10 +60,7 @@
       "guard-for-in": "off",
       "no-negated-condition": "off",
       "max-depth": "off",
-      "max-lines": "off",
-      "complexity": "off",
-      "no-eq-null": "off",
-      "eqeqeq": "off"
+      "complexity": "off"
     },
     "ignores": [
       "parse-entities.js"
