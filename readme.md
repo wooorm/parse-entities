@@ -132,6 +132,19 @@ Character reference handler.
 
 [MIT][license] © [Titus Wormer][author]
 
+## Related
+
+*   [`stringify-entities`](https://github.com/wooorm/stringify-entities)
+    — Encode HTML character references
+*   [`character-entities`](https://github.com/wooorm/character-entities)
+    — Info on character entities
+*   [`character-entities-html4`](https://github.com/wooorm/character-entities-html4)
+    — Info on HTML4 character entities
+*   [`character-entities-legacy`](https://github.com/wooorm/character-entities-legacy)
+    — Info on legacy character entities
+*   [`character-reference-invalid`](https://github.com/wooorm/character-reference-invalid)
+    — Info on invalid numeric character references
+
 <!-- Definitions -->
 
 [build-badge]: https://img.shields.io/travis/wooorm/parse-entities.svg
