@@ -1,6 +1,5 @@
 'use strict';
 
-/* Dependencies. */
 var characterEntities = require('character-entities');
 var legacy = require('character-entities-legacy');
 var invalid = require('character-reference-invalid');
@@ -8,28 +7,11 @@ var decimal = require('is-decimal');
 var hexadecimal = require('is-hexadecimal');
 var alphanumerical = require('is-alphanumerical');
 
-/* Expose. */
-module.exports = wrapper;
+module.exports = parseEntities;
 
-/* Methods. */
 var own = {}.hasOwnProperty;
 var fromCharCode = String.fromCharCode;
 var noop = Function.prototype;
-
-/* Characters. */
-var REPLACEMENT = '\uFFFD';
-var FORM_FEED = '\f';
-var AMPERSAND = '&';
-var OCTOTHORP = '#';
-var SEMICOLON = ';';
-var NEWLINE = '\n';
-var X_LOWER = 'x';
-var X_UPPER = 'X';
-var SPACE = ' ';
-var LESS_THAN = '<';
-var EQUAL = '=';
-var EMPTY = '';
-var TAB = '\t';
 
 /* Default settings. */
 var defaults = {
@@ -75,24 +57,18 @@ var NAMED_UNKNOWN = 5;
 var NUMERIC_DISALLOWED = 6;
 var NUMERIC_PROHIBITED = 7;
 
-var NUMERIC_REFERENCE = 'Numeric character references';
-var NAMED_REFERENCE = 'Named character references';
-var TERMINATED = ' must be terminated by a semicolon';
-var VOID = ' cannot be empty';
-
 var MESSAGES = {};
 
-MESSAGES[NAMED_NOT_TERMINATED] = NAMED_REFERENCE + TERMINATED;
-MESSAGES[NUMERIC_NOT_TERMINATED] = NUMERIC_REFERENCE + TERMINATED;
-MESSAGES[NAMED_EMPTY] = NAMED_REFERENCE + VOID;
-MESSAGES[NUMERIC_EMPTY] = NUMERIC_REFERENCE + VOID;
-MESSAGES[NAMED_UNKNOWN] = NAMED_REFERENCE + ' must be known';
-MESSAGES[NUMERIC_DISALLOWED] = NUMERIC_REFERENCE + ' cannot be disallowed';
-MESSAGES[NUMERIC_PROHIBITED] = NUMERIC_REFERENCE + ' cannot be outside the ' +
-    'permissible Unicode range';
+MESSAGES[NAMED_NOT_TERMINATED] = 'Named character references must be terminated by a semicolon';
+MESSAGES[NUMERIC_NOT_TERMINATED] = 'Numeric character references must be terminated by a semicolon';
+MESSAGES[NAMED_EMPTY] = 'Named character references cannot be empty';
+MESSAGES[NUMERIC_EMPTY] = 'Numeric character references cannot be empty';
+MESSAGES[NAMED_UNKNOWN] = 'Named character references must be known';
+MESSAGES[NUMERIC_DISALLOWED] = 'Numeric character references cannot be disallowed';
+MESSAGES[NUMERIC_PROHIBITED] = 'Numeric character references cannot be outside the permissible Unicode range';
 
 /* Wrap to ensure clean parameters are given to `parse`. */
-function wrapper(value, options) {
+function parseEntities(value, options) {
   var settings = {};
   var option;
   var key;
@@ -131,7 +107,7 @@ function parse(value, settings) {
   var lines = -1;
   var column = pos.column || 1;
   var line = pos.line || 1;
-  var queue = EMPTY;
+  var queue = '';
   var result = [];
   var entityCharacters;
   var terminated;
@@ -165,7 +141,7 @@ function parse(value, settings) {
 
   while (++index < length) {
     /* If the previous character was a newline. */
-    if (character === NEWLINE) {
+    if (character === '\n') {
       column = indent[lines] || 1;
     }
 
@@ -173,8 +149,8 @@ function parse(value, settings) {
 
     /* Handle anything other than an ampersand,
      * including newlines and EOF. */
-    if (character !== AMPERSAND) {
-      if (character === NEWLINE) {
+    if (character !== '&') {
+      if (character === '\n') {
         line++;
         lines++;
         column = 0;
@@ -192,13 +168,13 @@ function parse(value, settings) {
       /* The behaviour depends on the identity of the next
        * character. */
       if (
-        following === TAB ||
-        following === NEWLINE ||
-        following === FORM_FEED ||
-        following === SPACE ||
-        following === LESS_THAN ||
-        following === AMPERSAND ||
-        following === EMPTY ||
+        following === '\t' || /* Tab */
+        following === '\n' || /* Newline */
+        following === '\f' || /* Form feed */
+        following === ' ' || /* Space */
+        following === '<' || /* Less-than */
+        following === '&' || /* Ampersand */
+        following === '' ||
         (additional && following === additional)
       ) {
         /* Not a character reference. No characters
@@ -215,7 +191,7 @@ function parse(value, settings) {
       end = start;
 
       /* Numerical entity. */
-      if (following !== OCTOTHORP) {
+      if (following !== '#') {
         type = NAMED;
       } else {
         end = ++begin;
@@ -224,7 +200,7 @@ function parse(value, settings) {
          * character after the U+0023 NUMBER SIGN. */
         following = at(end);
 
-        if (following === X_LOWER || following === X_UPPER) {
+        if (following === 'x' || following === 'X') {
           /* ASCII hex digits. */
           type = HEXADECIMAL;
           end = ++begin;
@@ -234,9 +210,9 @@ function parse(value, settings) {
         }
       }
 
-      entityCharacters = EMPTY;
-      entity = EMPTY;
-      characters = EMPTY;
+      entityCharacters = '';
+      entity = '';
+      characters = '';
       test = TESTS[type];
       end--;
 
@@ -260,7 +236,7 @@ function parse(value, settings) {
         }
       }
 
-      terminated = at(end) === SEMICOLON;
+      terminated = at(end) === ';';
 
       if (terminated) {
         end++;
@@ -300,16 +276,14 @@ function parse(value, settings) {
           /* If the reference is not terminated,
            * warn. */
           if (!terminated) {
-            reason = entityCharacters ?
-              NAMED_NOT_TERMINATED :
-              NAMED_EMPTY;
+            reason = entityCharacters ? NAMED_NOT_TERMINATED : NAMED_EMPTY;
 
             if (!settings.attribute) {
               warning(reason, diff);
             } else {
               following = at(end);
 
-              if (following === EQUAL) {
+              if (following === '=') {
                 warning(reason, diff);
                 entity = null;
               } else if (alphanumerical(following)) {
@@ -336,24 +310,22 @@ function parse(value, settings) {
         /* Trigger a warning when the parsed number
          * is prohibited, and replace with
          * replacement character. */
-        if (isProhibited(reference)) {
+        if (prohibited(reference)) {
           warning(NUMERIC_PROHIBITED, diff);
-
-          reference = REPLACEMENT;
+          reference = '\uFFFD';
         } else if (reference in invalid) {
           /* Trigger a warning when the parsed number
            * is disallowed, and replace by an
            * alternative. */
           warning(NUMERIC_DISALLOWED, diff);
-
           reference = invalid[reference];
         } else {
           /* Parse the number. */
-          output = EMPTY;
+          output = '';
 
           /* Trigger a warning when the parsed
            * number should not be used. */
-          if (isWarning(reference)) {
+          if (disallowed(reference)) {
             warning(NUMERIC_DISALLOWED, diff);
           }
 
@@ -404,7 +376,7 @@ function parse(value, settings) {
   }
 
   /* Return the reduced nodes, and any possible warnings. */
-  return result.join(EMPTY);
+  return result.join('');
 
   /* Get current position. */
   function now() {
@@ -438,25 +410,21 @@ function parse(value, settings) {
       result.push(queue);
 
       if (handleText) {
-        handleText.call(textContext, queue, {
-          start: prev,
-          end: now()
-        });
+        handleText.call(textContext, queue, {start: prev, end: now()});
       }
 
-      queue = EMPTY;
+      queue = '';
     }
   }
 }
 
-/* Check if `character` is outside the permissible
- * unicode range. */
-function isProhibited(code) {
+/* Check if `character` is outside the permissible unicode range. */
+function prohibited(code) {
   return (code >= 0xD800 && code <= 0xDFFF) || (code > 0x10FFFF);
 }
 
 /* Check if `character` is disallowed. */
-function isWarning(code) {
+function disallowed(code) {
   if (
     (code >= 0x0001 && code <= 0x0008) ||
     code === 0x000B ||
