@@ -2,11 +2,9 @@
 
 /* eslint-disable max-params */
 
-/* Dependencies. */
 var test = require('tape');
 var decode = require('./');
 
-/* Tests. */
 test('parseEntities(value)', function (t) {
   t.equal(
     decode('I’m &notit; though'),
