@@ -30,45 +30,61 @@ decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel');
 
 ## `parseEntities(value[, options])`
 
-###### `options`
+##### `options`
 
-*   `additional` (`string`, optional, default: `''`)
-    — Additional character to accept when following an ampersand (without
-    error)
-*   `attribute` (`boolean`, optional, default: `false`)
-    — Whether to parse `value` as an attribute value
-*   `nonTerminated` (`boolean`, default: `true`)
-    — Whether to allow non-terminated entities, such as `&copycat` to
-    `©cat`.  This behaviour is spec-compliant but can lead to unexpected
-    results
-*   `warning` ([`Function`][warning], optional)
-    — Error handler
-*   `text` ([`Function`][text], optional)
-    — Text handler
-*   `reference` ([`Function`][reference],
-    optional) — Reference handler
-*   `warningContext` (`'*'`, optional)
-    — Context used when invoking `warning`
-*   `textContext` (`'*'`, optional)
-    — Context used when invoking `text`
-*   `referenceContext` (`'*'`, optional)
-    — Context used when invoking `reference`
-*   `position` (`Location` or `Position`, optional)
-    — Starting `position` of `value`, useful when dealing with values
-    nested in some sort of syntax tree.  The default is:
+###### `options.additional`
 
-    ```json
-    {
-      "start": {
-        "line": 1,
-        "column": 1,
-        "offset": 0
-      },
-      "indent": []
-    }
-    ```
+Additional character to accept (`string?`, default: `''`).
+This allows other characters, without error, when following an ampersand.
 
-###### Returns
+###### `options.attribute`
+
+Whether to parse `value` as an attribute value (`boolean?`, default:
+`false`).
+
+###### `options.nonTerminated`
+
+Whether to allow non-terminated entities (`boolean`, default: `true`).
+For example, `&copycat` for `©cat`.  This behaviour is spec-compliant but
+can lead to unexpected results.
+
+###### `options.warning`
+
+Error handler ([`Function?`][warning]).
+
+###### `options.text`
+
+Text handler ([`Function?`][text]).
+
+###### `options.reference`
+
+Reference handler ([`Function?`][reference]).
+
+###### `options.warningContext`
+
+Context used when invoking `warning` (`'*'`, optional).
+
+###### `options.textContext`
+
+Context used when invoking `text` (`'*'`, optional).
+
+###### `options.referenceContext`
+
+Context used when invoking `reference` (`'*'`, optional)
+
+###### `options.position`
+
+Starting `position` of `value` (`Location` or `Position`, optional).  Useful
+when dealing with values nested in some sort of syntax tree.  The default is:
+
+```js
+{
+  start: {line: 1, column: 1, offset: 0},
+  indent: []
+}
+```
+
+##### Returns
 
 `string` — Decoded `value`.
 
@@ -76,18 +92,23 @@ decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel');
 
 Error handler.
 
-###### Context
+##### Context
 
 `this` refers to `warningContext` when given to `parseEntities`.
 
-###### Parameters
+##### Parameters
 
-*   `reason` (`string`)
-    — Reason (human-readable) for triggering a parse error
-*   `position` (`Position`)
-    — Place at which the parse error occurred
-*   `code` (`number`)
-    — Identifier of reason for triggering a parse error
+###### `reason`
+
+Human-readable reason for triggering a parse error (`string`).
+
+###### `position`
+
+Place at which the parse error occurred (`Position`).
+
+###### `code`
+
+Identifier of reason for triggering a parse error (`number`).
 
 The following codes are used:
 
@@ -101,36 +122,45 @@ The following codes are used:
 | `6`  | `Foo &#128; baz`   | [Disallowed reference][invalid]               |
 | `7`  | `Foo &#xD800; baz` | Prohibited: outside permissible unicode range |
 
-###### `function text(value, location)`
+### `function text(value, location)`
 
 Text handler.
 
-###### Context
+##### Context
 
 `this` refers to `textContext` when given to `parseEntities`.
 
-###### Parameters
+##### Parameters
 
-*   `value` (`string`) — String of content
-*   `location` (`Location`) — Location at which `value` starts and ends
+###### `value`
+
+String of content (`string`).
+
+###### `location`
+
+Location at which `value` starts and ends (`Location`).
 
 ### `function reference(value, location, source)`
 
 Character reference handler.
 
-###### Context
+##### Context
 
 `this` refers to `referenceContext` when given to `parseEntities`.
 
-###### Parameters
+##### Parameters
 
-*   `value` (`string`) — Encoded character reference
-*   `location` (`Location`) — Location at which `value` starts and ends
-*   `source` (`Location`) — Source of character reference
+###### `value`
 
-## License
+Encoded character reference (`string`).
 
-[MIT][license] © [Titus Wormer][author]
+###### `location`
+
+Location at which `value` starts and ends (`Location`).
+
+###### `source`
+
+Source of character reference (`Location`).
 
 ## Related
 
@@ -144,6 +174,10 @@ Character reference handler.
     — Info on legacy character entities
 *   [`character-reference-invalid`](https://github.com/wooorm/character-reference-invalid)
     — Info on invalid numeric character references
+
+## License
+
+[MIT][license] © [Titus Wormer][author]
 
 <!-- Definitions -->
 
