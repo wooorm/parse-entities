@@ -3,7 +3,7 @@
 /* eslint-disable max-params */
 
 var test = require('tape');
-var decode = require('./');
+var decode = require('.');
 
 test('parseEntities(value)', function (t) {
   t.equal(
@@ -132,7 +132,7 @@ test('parseEntities(value)', function (t) {
     result: 'Foo &\tbar',
     reference: [],
     text: [
-        ['Foo &\tbar', location(1, 1, 0, 1, 10, 9)]
+      ['Foo &\tbar', location(1, 1, 0, 1, 10, 9)]
     ],
     warning: []
   }, 'should work on an ampersand followed by a tab');
