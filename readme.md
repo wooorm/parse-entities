@@ -14,16 +14,16 @@ npm install parse-entities
 ## Usage
 
 ```js
-var decode = require('parse-entities');
+var decode = require('parse-entities')
 
-decode('alpha &amp bravo');
-//=> alpha & bravo
+decode('alpha &amp bravo')
+// => alpha & bravo
 
-decode('charlie &copycat; delta');
-//=> charlie ©cat; delta
+decode('charlie &copycat; delta')
+// => charlie ©cat; delta
 
-decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel');
-//=> echo © foxtrot ≠ golf 𝌆 hotel
+decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel')
+// => echo © foxtrot ≠ golf 𝌆 hotel
 ```
 
 ## API
