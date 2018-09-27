@@ -17,6 +17,9 @@
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
   ],
+  "browser": {
+    "./decode-entity.js": "./decode-entity.browser.js"
+  },
   "files": [
     "index.js"
   ],
