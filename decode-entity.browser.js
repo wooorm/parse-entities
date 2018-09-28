@@ -4,10 +4,13 @@ var el
 module.exports = decodeEntity
 
 function decodeEntity(characters) {
+  var char
+  var entity
+
   el = el || document.createElement('em')
-  var entity = '&' + characters + ';'
+  entity = '&' + characters + ';'
   el.innerHTML = entity
-  var char = el.textContent
+  char = el.textContent
 
   // Some entities do not require the closing semicolon (&not - for instance),
   // which leads to situations where parsing the assumed entity of &notit; will

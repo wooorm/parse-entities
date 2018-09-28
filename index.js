@@ -115,6 +115,7 @@ function parse(value, settings) {
   var queue = ''
   var result = []
   var entityCharacters
+  var namedEntity
   var terminated
   var characters
   var character
@@ -246,7 +247,7 @@ function parse(value, settings) {
       if (terminated) {
         end++
 
-        var namedEntity = type === NAMED && decodeEntity(characters)
+        namedEntity = type === NAMED && decodeEntity(characters)
         if (namedEntity) {
           entityCharacters = characters
           entity = namedEntity
