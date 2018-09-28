@@ -1,7 +1,18 @@
 language: node_js
 node_js:
-- lts/boron
-- node
+  - lts/boron
+  - node
+addons:
+  apt:
+    packages:
+      - xvfb
+install:
+  - export DISPLAY=':99.0'
+  - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+  - npm install
+script:
+  - npm test
+  - npm run test-browser -- --browser=firefox
 after_script: bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: releases

@@ -17,6 +17,9 @@
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
   ],
+  "browser": {
+    "./decode-entity.js": "./decode-entity.browser.js"
+  },
   "files": [
     "index.js"
   ],
@@ -36,6 +39,7 @@
     "remark-cli": "^5.0.0",
     "remark-preset-wooorm": "^4.0.0",
     "tape": "^4.2.0",
+    "tape-run": "^4.0.0",
     "xo": "^0.20.0"
   },
   "scripts": {
@@ -45,7 +49,8 @@
     "build": "npm run build-bundle && npm run build-mangle",
     "test-api": "node test",
     "test-coverage": "nyc --reporter lcov tape test.js",
-    "test": "npm run format && npm run build && npm run test-coverage"
+    "test-browser": "browserify test.js | tape-run",
+    "test": "npm run format && npm run build && npm run test-coverage && npm run test-browser"
   },
   "nyc": {
     "check-coverage": true,
