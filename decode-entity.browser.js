@@ -7,11 +7,10 @@ var el
 module.exports = decodeEntity
 
 function decodeEntity(characters) {
+  var entity = '&' + characters + ';'
   var char
-  var entity
 
   el = el || document.createElement('i')
-  entity = '&' + characters + ';'
   el.innerHTML = entity
   char = el.textContent
 
