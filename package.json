@@ -20,6 +20,9 @@
   "browser": {
     "./decode-entity.js": "./decode-entity.browser.js"
   },
+  "react-native": {
+    "./decode-entity.js": "./decode-entity.js"
+  },
   "files": [
     "index.js",
     "decode-entity.js",
