@@ -13,7 +13,7 @@ var own = {}.hasOwnProperty
 var fromCharCode = String.fromCharCode
 var noop = Function.prototype
 
-/* Default settings. */
+// Default settings.
 var defaults = {
   warning: null,
   reference: null,
@@ -27,28 +27,28 @@ var defaults = {
   nonTerminated: true
 }
 
-/* Reference types. */
+// Reference types.
 var NAMED = 'named'
 var HEXADECIMAL = 'hexadecimal'
 var DECIMAL = 'decimal'
 
-/* Map of bases. */
+// Map of bases.
 var BASE = {}
 
 BASE[HEXADECIMAL] = 16
 BASE[DECIMAL] = 10
 
-/* Map of types to tests. Each type of character reference
- * accepts different characters. This test is used to
- * detect whether a reference has ended (as the semicolon
- * is not strictly needed). */
+// Map of types to tests.
+// Each type of character reference accepts different characters.
+// This test is used to detect whether a reference has ended (as the semicolon
+// is not strictly needed).
 var TESTS = {}
 
 TESTS[NAMED] = alphanumerical
 TESTS[DECIMAL] = decimal
 TESTS[HEXADECIMAL] = hexadecimal
 
-/* Warning messages. */
+// Warning messages.
 var NAMED_NOT_TERMINATED = 1
 var NUMERIC_NOT_TERMINATED = 2
 var NAMED_EMPTY = 3
@@ -71,7 +71,7 @@ MESSAGES[NUMERIC_DISALLOWED] =
 MESSAGES[NUMERIC_PROHIBITED] =
   'Numeric character references cannot be outside the permissible Unicode range'
 
-/* Wrap to ensure clean parameters are given to `parse`. */
+// Wrap to ensure clean parameters are given to `parse`.
 function parseEntities(value, options) {
   var settings = {}
   var option
@@ -95,7 +95,7 @@ function parseEntities(value, options) {
   return parse(value, settings)
 }
 
-/* Parse entities. */
+// Parse entities.
 function parse(value, settings) {
   var additional = settings.additional
   var nonTerminated = settings.nonTerminated
@@ -134,27 +134,25 @@ function parse(value, settings) {
   var diff
   var end
 
-  /* Cache the current point. */
+  // Cache the current point.
   prev = now()
 
-  /* Wrap `handleWarning`. */
+  // Wrap `handleWarning`.
   warning = handleWarning ? parseError : noop
 
-  /* Ensure the algorithm walks over the first character
-   * and the end (inclusive). */
+  // Ensure the algorithm walks over the first character and the end (inclusive).
   index--
   length++
 
   while (++index < length) {
-    /* If the previous character was a newline. */
+    // If the previous character was a newline.
     if (character === '\n') {
       column = indent[lines] || 1
     }
 
     character = at(index)
 
-    /* Handle anything other than an ampersand,
-     * including newlines and EOF. */
+    // Handle anything other than an ampersand, including newlines and EOF.
     if (character !== '&') {
       if (character === '\n') {
         line++
@@ -171,21 +169,20 @@ function parse(value, settings) {
     } else {
       following = at(index + 1)
 
-      /* The behaviour depends on the identity of the next
-       * character. */
+      // The behaviour depends on the identity of the next character.
       if (
-        following === '\t' /* Tab */ ||
-        following === '\n' /* Newline */ ||
-        following === '\f' /* Form feed */ ||
-        following === ' ' /* Space */ ||
-        following === '<' /* Less-than */ ||
-        following === '&' /* Ampersand */ ||
+        following === '\t' || // Tab
+        following === '\n' || // Newline
+        following === '\f' || // Form feed
+        following === ' ' || // Space
+        following === '<' || // Less-than
+        following === '&' || // Ampersand
         following === '' ||
         (additional && following === additional)
       ) {
-        /* Not a character reference. No characters
-         * are consumed, and nothing is returned.
-         * This is not an error, either. */
+        // Not a character reference.
+        // No characters are consumed, and nothing is returned.
+        // This is not an error, either.
         queue += character
         column++
 
@@ -196,22 +193,22 @@ function parse(value, settings) {
       begin = start
       end = start
 
-      /* Numerical entity. */
+      // Numerical entity.
       if (following !== '#') {
         type = NAMED
       } else {
         end = ++begin
 
-        /* The behaviour further depends on the
-         * character after the U+0023 NUMBER SIGN. */
+        // The behaviour further depends on the character after the U+0023
+        // NUMBER SIGN.
         following = at(end)
 
         if (following === 'x' || following === 'X') {
-          /* ASCII hex digits. */
+          // ASCII hex digits.
           type = HEXADECIMAL
           end = ++begin
         } else {
-          /* ASCII digits. */
+          // ASCII digits.
           type = DECIMAL
         }
       }
@@ -231,11 +228,9 @@ function parse(value, settings) {
 
         characters += following
 
-        /* Check if we can match a legacy named
-         * reference.  If so, we cache that as the
-         * last viable named reference.  This
-         * ensures we do not need to walk backwards
-         * later. */
+        // Check if we can match a legacy named reference.
+        // If so, we cache that as the last viable named reference.
+        // This ensures we do not need to walk backwards later.
         if (type === NAMED && own.call(legacy, characters)) {
           entityCharacters = characters
           entity = legacy[characters]
@@ -258,31 +253,28 @@ function parse(value, settings) {
       diff = 1 + end - start
 
       if (!terminated && !nonTerminated) {
-        /* Empty. */
+        // Empty.
       } else if (!characters) {
-        /* An empty (possible) entity is valid, unless
-         * its numeric (thus an ampersand followed by
-         * an octothorp). */
+        // An empty (possible) entity is valid, unless its numeric (thus an
+        // ampersand followed by an octothorp).
         if (type !== NAMED) {
           warning(NUMERIC_EMPTY, diff)
         }
       } else if (type === NAMED) {
-        /* An ampersand followed by anything
-         * unknown, and not terminated, is invalid. */
+        // An ampersand followed by anything unknown, and not terminated, is
+        // invalid.
         if (terminated && !entity) {
           warning(NAMED_UNKNOWN, 1)
         } else {
-          /* If theres something after an entity
-           * name which is not known, cap the
-           * reference. */
+          // If theres something after an entity name which is not known, cap
+          // the reference.
           if (entityCharacters !== characters) {
             end = begin + entityCharacters.length
             diff = 1 + end - begin
             terminated = false
           }
 
-          /* If the reference is not terminated,
-           * warn. */
+          // If the reference is not terminated, warn.
           if (!terminated) {
             reason = entityCharacters ? NAMED_NOT_TERMINATED : NAMED_EMPTY
 
@@ -306,38 +298,34 @@ function parse(value, settings) {
         reference = entity
       } else {
         if (!terminated) {
-          /* All non-terminated numeric entities are
-           * not rendered, and trigger a warning. */
+          // All non-terminated numeric entities are not rendered, and trigger a
+          // warning.
           warning(NUMERIC_NOT_TERMINATED, diff)
         }
 
-        /* When terminated and number, parse as
-         * either hexadecimal or decimal. */
+        // When terminated and number, parse as either hexadecimal or decimal.
         reference = parseInt(characters, BASE[type])
 
-        /* Trigger a warning when the parsed number
-         * is prohibited, and replace with
-         * replacement character. */
+        // Trigger a warning when the parsed number is prohibited, and replace
+        // with replacement character.
         if (prohibited(reference)) {
           warning(NUMERIC_PROHIBITED, diff)
           reference = '\uFFFD'
         } else if (reference in invalid) {
-          /* Trigger a warning when the parsed number
-           * is disallowed, and replace by an
-           * alternative. */
+          // Trigger a warning when the parsed number is disallowed, and replace
+          // by an alternative.
           warning(NUMERIC_DISALLOWED, diff)
           reference = invalid[reference]
         } else {
-          /* Parse the number. */
+          // Parse the number.
           output = ''
 
-          /* Trigger a warning when the parsed
-           * number should not be used. */
+          // Trigger a warning when the parsed number should not be used.
           if (disallowed(reference)) {
             warning(NUMERIC_DISALLOWED, diff)
           }
 
-          /* Stringify the number. */
+          // Stringify the number.
           if (reference > 0xffff) {
             reference -= 0x10000
             output += fromCharCode((reference >>> (10 & 0x3ff)) | 0xd800)
@@ -348,20 +336,18 @@ function parse(value, settings) {
         }
       }
 
-      /* If we could not find a reference, queue the
-       * checked characters (as normal characters),
-       * and move the pointer to their end. This is
-       * possible because we can be certain neither
-       * newlines nor ampersands are included. */
+      // If we could not find a reference, queue the checked characters (as
+      // normal characters), and move the pointer to their end.
+      // This is possible because we can be certain neither newlines nor
+      // ampersands are included.
       if (!reference) {
         characters = value.slice(start - 1, end)
         queue += characters
         column += characters.length
         index = end - 1
       } else {
-        /* Found it! First eat the queued
-         * characters as normal text, then eat
-         * an entity. */
+        // Found it!
+        // First eat the queued characters as normal text, then eat an entity.
         flush()
 
         prev = now()
@@ -385,10 +371,10 @@ function parse(value, settings) {
     }
   }
 
-  /* Return the reduced nodes, and any possible warnings. */
+  // Return the reduced nodes, and any possible warnings.
   return result.join('')
 
-  /* Get current position. */
+  // Get current position.
   function now() {
     return {
       line: line,
@@ -397,7 +383,7 @@ function parse(value, settings) {
     }
   }
 
-  /* “Throw” a parse-error: a warning. */
+  // “Throw” a parse-error: a warning.
   function parseError(code, offset) {
     var position = now()
 
@@ -407,14 +393,14 @@ function parse(value, settings) {
     handleWarning.call(warningContext, MESSAGES[code], position, code)
   }
 
-  /* Get character at position. */
+  // Get character at position.
   function at(position) {
     return value.charAt(position)
   }
 
-  /* Flush `queue` (normal text). Macro invoked before
-   * each entity and at the end of `value`.
-   * Does nothing when `queue` is empty. */
+  // Flush `queue` (normal text).
+  // Macro invoked before each entity and at the end of `value`.
+  // Does nothing when `queue` is empty.
   function flush() {
     if (queue) {
       result.push(queue)
@@ -428,12 +414,12 @@ function parse(value, settings) {
   }
 }
 
-/* Check if `character` is outside the permissible unicode range. */
+// Check if `character` is outside the permissible unicode range.
 function prohibited(code) {
   return (code >= 0xd800 && code <= 0xdfff) || code > 0x10ffff
 }
 
-/* Check if `character` is disallowed. */
+// Check if `character` is disallowed.
 function disallowed(code) {
   return (
     (code >= 0x0001 && code <= 0x0008) ||

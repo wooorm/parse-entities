@@ -207,8 +207,8 @@ test('parseEntities(value)', function(t) {
       result: 'Foo &&bar',
       reference: [],
       text: [['Foo &&bar', location(1, 1, 0, 1, 10, 9)]],
-      /* The warning here is for the following ampersand,
-       * followed by `bar`, which is not an entity. */
+      // The warning here is for the following ampersand, followed by `bar`,
+      // which is not an entity.
       warning: [
         ['Named character references cannot be empty', position(1, 7, 6), 3]
       ]
@@ -574,7 +574,7 @@ test('parseEntities(value)', function(t) {
       warning: []
     }
 
-    /* Construct an `add`er for `type`. */
+    // Construct an `add`er for `type`.
     function addFactory(type) {
       return function() {
         result[type].push([].slice.apply(arguments))
@@ -591,7 +591,7 @@ test('parseEntities(value)', function(t) {
   }
 })
 
-/* Utility to create a `location`. */
+// Utility to create a `location`.
 // eslint-disable-next-line max-params
 function location(aLine, aColumn, aOffset, bLine, bColumn, bOffset) {
   return {
@@ -600,7 +600,7 @@ function location(aLine, aColumn, aOffset, bLine, bColumn, bOffset) {
   }
 }
 
-/* Utility to create a `position`. */
+// Utility to create a `position`.
 function position(line, column, offset) {
   return {line: line, column: column, offset: offset}
 }
