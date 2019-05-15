@@ -28,47 +28,47 @@ var defaults = {
 }
 
 // Reference types.
-var NAMED = 'named'
-var HEXADECIMAL = 'hexadecimal'
-var DECIMAL = 'decimal'
+var name = 'named'
+var hexa = 'hexadecimal'
+var deci = 'decimal'
 
 // Map of bases.
-var BASE = {}
+var bases = {}
 
-BASE[HEXADECIMAL] = 16
-BASE[DECIMAL] = 10
+bases[hexa] = 16
+bases[deci] = 10
 
 // Map of types to tests.
 // Each type of character reference accepts different characters.
 // This test is used to detect whether a reference has ended (as the semicolon
 // is not strictly needed).
-var TESTS = {}
+var tests = {}
 
-TESTS[NAMED] = alphanumerical
-TESTS[DECIMAL] = decimal
-TESTS[HEXADECIMAL] = hexadecimal
+tests[name] = alphanumerical
+tests[deci] = decimal
+tests[hexa] = hexadecimal
 
 // Warning messages.
-var NAMED_NOT_TERMINATED = 1
-var NUMERIC_NOT_TERMINATED = 2
-var NAMED_EMPTY = 3
-var NUMERIC_EMPTY = 4
-var NAMED_UNKNOWN = 5
-var NUMERIC_DISALLOWED = 6
-var NUMERIC_PROHIBITED = 7
+var namedNotTerminated = 1
+var numericNotTerminated = 2
+var namedEmpty = 3
+var numericEmpty = 4
+var namedUnknown = 5
+var numericDisallowed = 6
+var numericProhibited = 7
 
-var MESSAGES = {}
+var messages = {}
 
-MESSAGES[NAMED_NOT_TERMINATED] =
+messages[namedNotTerminated] =
   'Named character references must be terminated by a semicolon'
-MESSAGES[NUMERIC_NOT_TERMINATED] =
+messages[numericNotTerminated] =
   'Numeric character references must be terminated by a semicolon'
-MESSAGES[NAMED_EMPTY] = 'Named character references cannot be empty'
-MESSAGES[NUMERIC_EMPTY] = 'Numeric character references cannot be empty'
-MESSAGES[NAMED_UNKNOWN] = 'Named character references must be known'
-MESSAGES[NUMERIC_DISALLOWED] =
+messages[namedEmpty] = 'Named character references cannot be empty'
+messages[numericEmpty] = 'Numeric character references cannot be empty'
+messages[namedUnknown] = 'Named character references must be known'
+messages[numericDisallowed] =
   'Numeric character references cannot be disallowed'
-MESSAGES[NUMERIC_PROHIBITED] =
+messages[numericProhibited] =
   'Numeric character references cannot be outside the permissible Unicode range'
 
 // Wrap to ensure clean parameters are given to `parse`.
@@ -189,21 +189,21 @@ function parse(value, settings) {
 
         if (following === 'x' || following === 'X') {
           // ASCII hex digits.
-          type = HEXADECIMAL
+          type = hexa
           end = ++begin
         } else {
           // ASCII digits.
-          type = DECIMAL
+          type = deci
         }
       } else {
         // Numerical entity.
-        type = NAMED
+        type = name
       }
 
       entityCharacters = ''
       entity = ''
       characters = ''
-      test = TESTS[type]
+      test = tests[type]
       end--
 
       while (++end < length) {
@@ -218,7 +218,7 @@ function parse(value, settings) {
         // Check if we can match a legacy named reference.
         // If so, we cache that as the last viable named reference.
         // This ensures we do not need to walk backwards later.
-        if (type === NAMED && own.call(legacy, characters)) {
+        if (type === name && own.call(legacy, characters)) {
           entityCharacters = characters
           entity = legacy[characters]
         }
@@ -229,7 +229,7 @@ function parse(value, settings) {
       if (terminated) {
         end++
 
-        namedEntity = type === NAMED ? decodeEntity(characters) : false
+        namedEntity = type === name ? decodeEntity(characters) : false
 
         if (namedEntity) {
           entityCharacters = characters
@@ -244,14 +244,14 @@ function parse(value, settings) {
       } else if (!characters) {
         // An empty (possible) entity is valid, unless its numeric (thus an
         // ampersand followed by an octothorp).
-        if (type !== NAMED) {
-          warning(NUMERIC_EMPTY, diff)
+        if (type !== name) {
+          warning(numericEmpty, diff)
         }
-      } else if (type === NAMED) {
+      } else if (type === name) {
         // An ampersand followed by anything unknown, and not terminated, is
         // invalid.
         if (terminated && !entity) {
-          warning(NAMED_UNKNOWN, 1)
+          warning(namedUnknown, 1)
         } else {
           // If theres something after an entity name which is not known, cap
           // the reference.
@@ -263,7 +263,7 @@ function parse(value, settings) {
 
           // If the reference is not terminated, warn.
           if (!terminated) {
-            reason = entityCharacters ? NAMED_NOT_TERMINATED : NAMED_EMPTY
+            reason = entityCharacters ? namedNotTerminated : namedEmpty
 
             if (settings.attribute) {
               following = at(end)
@@ -287,21 +287,21 @@ function parse(value, settings) {
         if (!terminated) {
           // All non-terminated numeric entities are not rendered, and trigger a
           // warning.
-          warning(NUMERIC_NOT_TERMINATED, diff)
+          warning(numericNotTerminated, diff)
         }
 
         // When terminated and number, parse as either hexadecimal or decimal.
-        reference = parseInt(characters, BASE[type])
+        reference = parseInt(characters, bases[type])
 
         // Trigger a warning when the parsed number is prohibited, and replace
         // with replacement character.
         if (prohibited(reference)) {
-          warning(NUMERIC_PROHIBITED, diff)
+          warning(numericProhibited, diff)
           reference = '\uFFFD'
         } else if (reference in invalid) {
           // Trigger a warning when the parsed number is disallowed, and replace
           // by an alternative.
-          warning(NUMERIC_DISALLOWED, diff)
+          warning(numericDisallowed, diff)
           reference = invalid[reference]
         } else {
           // Parse the number.
@@ -309,7 +309,7 @@ function parse(value, settings) {
 
           // Trigger a warning when the parsed number should not be used.
           if (disallowed(reference)) {
-            warning(NUMERIC_DISALLOWED, diff)
+            warning(numericDisallowed, diff)
           }
 
           // Stringify the number.
@@ -391,7 +391,7 @@ function parse(value, settings) {
     position.column += offset
     position.offset += offset
 
-    handleWarning.call(warningContext, MESSAGES[code], position, code)
+    handleWarning.call(warningContext, messages[code], position, code)
   }
 
   // Get character at position.
