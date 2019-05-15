@@ -1,7 +1,5 @@
 'use strict'
 
-/* eslint-disable max-params */
-
 var test = require('tape')
 var decode = require('.')
 
@@ -210,7 +208,7 @@ test('parseEntities(value)', function(t) {
       reference: [],
       text: [['Foo &&bar', location(1, 1, 0, 1, 10, 9)]],
       /* The warning here is for the following ampersand,
-     * followed by `bar`, which is not an entity. */
+       * followed by `bar`, which is not an entity. */
       warning: [
         ['Named character references cannot be empty', position(1, 7, 6), 3]
       ]
@@ -594,6 +592,7 @@ test('parseEntities(value)', function(t) {
 })
 
 /* Utility to create a `location`. */
+// eslint-disable-next-line max-params
 function location(aLine, aColumn, aOffset, bLine, bColumn, bOffset) {
   return {
     start: position(aLine, aColumn, aOffset),
