@@ -13,9 +13,9 @@
   ],
   "repository": "wooorm/parse-entities",
   "bugs": "https://github.com/wooorm/parse-entities/issues",
-  "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
+  "author": "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
   "contributors": [
-    "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
+    "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)"
   ],
   "browser": {
     "./decode-entity.js": "./decode-entity.browser.js"

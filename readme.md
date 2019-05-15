@@ -193,7 +193,7 @@ Source of character reference (`Location`).
 
 [license]: license
 
-[author]: http://wooorm.com
+[author]: https://wooorm.com
 
 [warning]: #function-warningreason-position-code
 
