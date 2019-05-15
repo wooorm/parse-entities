@@ -27,6 +27,20 @@ var defaults = {
   nonTerminated: true
 }
 
+// Characters.
+var tab = 9 // '\t'
+var lineFeed = 10 // '\n'
+var formFeed = 12 //  '\f'
+var space = 32 // ' '
+var ampersand = 38 //  '&'
+var semicolon = 59 //  ';'
+var lessThan = 60 //  '<'
+var equalsTo = 61 //  '='
+var numberSign = 35 //  '#'
+var uppercaseX = 88 //  'X'
+var lowercaseX = 120 //  'x'
+var replacementCharacter = 65533 // '�'
+
 // Reference types.
 var name = 'named'
 var hexa = 'hexadecimal'
@@ -48,7 +62,7 @@ tests[name] = alphanumerical
 tests[deci] = decimal
 tests[hexa] = hexadecimal
 
-// Warning messages.
+// Warning types.
 var namedNotTerminated = 1
 var numericNotTerminated = 2
 var namedEmpty = 3
@@ -57,6 +71,7 @@ var namedUnknown = 5
 var numericDisallowed = 6
 var numericProhibited = 7
 
+// Warning messages.
 var messages = {}
 
 messages[namedNotTerminated] =
@@ -135,6 +150,10 @@ function parse(value, settings) {
   var diff
   var end
 
+  if (typeof additional === 'string') {
+    additional = additional.charCodeAt(0)
+  }
+
   // Cache the current point.
   prev = now()
 
@@ -147,30 +166,30 @@ function parse(value, settings) {
 
   while (++index < length) {
     // If the previous character was a newline.
-    if (character === '\n') {
+    if (character === lineFeed) {
       column = indent[lines] || 1
     }
 
-    character = at(index)
+    character = value.charCodeAt(index)
 
-    if (character === '&') {
-      following = at(index + 1)
+    if (character === ampersand) {
+      following = value.charCodeAt(index + 1)
 
       // The behaviour depends on the identity of the next character.
       if (
-        following === '\t' || // Tab
-        following === '\n' || // Newline
-        following === '\f' || // Form feed
-        following === ' ' || // Space
-        following === '<' || // Less-than
-        following === '&' || // Ampersand
-        following === '' ||
+        following === tab ||
+        following === lineFeed ||
+        following === formFeed ||
+        following === space ||
+        following === ampersand ||
+        following === lessThan ||
+        following !== following ||
         (additional && following === additional)
       ) {
         // Not a character reference.
         // No characters are consumed, and nothing is returned.
         // This is not an error, either.
-        queue += character
+        queue += fromCharCode(character)
         column++
 
         continue
@@ -180,14 +199,14 @@ function parse(value, settings) {
       begin = start
       end = start
 
-      if (following === '#') {
+      if (following === numberSign) {
+        // Numerical entity.
         end = ++begin
 
-        // The behaviour further depends on the character after the U+0023
-        // NUMBER SIGN.
-        following = at(end)
+        // The behaviour further depends on the next character.
+        following = value.charCodeAt(end)
 
-        if (following === 'x' || following === 'X') {
+        if (following === uppercaseX || following === lowercaseX) {
           // ASCII hex digits.
           type = hexa
           end = ++begin
@@ -196,7 +215,7 @@ function parse(value, settings) {
           type = deci
         }
       } else {
-        // Numerical entity.
+        // Named entity.
         type = name
       }
 
@@ -207,13 +226,13 @@ function parse(value, settings) {
       end--
 
       while (++end < length) {
-        following = at(end)
+        following = value.charCodeAt(end)
 
         if (!test(following)) {
           break
         }
 
-        characters += following
+        characters += fromCharCode(following)
 
         // Check if we can match a legacy named reference.
         // If so, we cache that as the last viable named reference.
@@ -224,7 +243,7 @@ function parse(value, settings) {
         }
       }
 
-      terminated = at(end) === ';'
+      terminated = value.charCodeAt(end) === semicolon
 
       if (terminated) {
         end++
@@ -242,7 +261,7 @@ function parse(value, settings) {
       if (!terminated && !nonTerminated) {
         // Empty.
       } else if (!characters) {
-        // An empty (possible) entity is valid, unless its numeric (thus an
+        // An empty (possible) entity is valid, unless it’s numeric (thus an
         // ampersand followed by an octothorp).
         if (type !== name) {
           warning(numericEmpty, diff)
@@ -266,9 +285,9 @@ function parse(value, settings) {
             reason = entityCharacters ? namedNotTerminated : namedEmpty
 
             if (settings.attribute) {
-              following = at(end)
+              following = value.charCodeAt(end)
 
-              if (following === '=') {
+              if (following === equalsTo) {
                 warning(reason, diff)
                 entity = null
               } else if (alphanumerical(following)) {
@@ -297,7 +316,7 @@ function parse(value, settings) {
         // with replacement character.
         if (prohibited(reference)) {
           warning(numericProhibited, diff)
-          reference = '\uFFFD'
+          reference = fromCharCode(replacementCharacter)
         } else if (reference in invalid) {
           // Trigger a warning when the parsed number is disallowed, and replace
           // by an alternative.
@@ -357,14 +376,16 @@ function parse(value, settings) {
       }
     } else {
       // Handle anything other than an ampersand, including newlines and EOF.
-      if (character === '\n') {
+      if (
+        character === 10 // Line feed
+      ) {
         line++
         lines++
         column = 0
       }
 
-      if (character) {
-        queue += character
+      if (character === character) {
+        queue += fromCharCode(character)
         column++
       } else {
         flush()
@@ -392,11 +413,6 @@ function parse(value, settings) {
     position.offset += offset
 
     handleWarning.call(warningContext, messages[code], position, code)
-  }
-
-  // Get character at position.
-  function at(position) {
-    return value.charAt(position)
   }
 
   // Flush `queue` (normal text).
