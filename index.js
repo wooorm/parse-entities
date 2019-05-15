@@ -96,6 +96,7 @@ function parseEntities(value, options) {
 }
 
 // Parse entities.
+// eslint-disable-next-line complexity
 function parse(value, settings) {
   var additional = settings.additional
   var nonTerminated = settings.nonTerminated
@@ -152,21 +153,7 @@ function parse(value, settings) {
 
     character = at(index)
 
-    // Handle anything other than an ampersand, including newlines and EOF.
-    if (character !== '&') {
-      if (character === '\n') {
-        line++
-        lines++
-        column = 0
-      }
-
-      if (character) {
-        queue += character
-        column++
-      } else {
-        flush()
-      }
-    } else {
+    if (character === '&') {
       following = at(index + 1)
 
       // The behaviour depends on the identity of the next character.
@@ -193,10 +180,7 @@ function parse(value, settings) {
       begin = start
       end = start
 
-      // Numerical entity.
-      if (following !== '#') {
-        type = NAMED
-      } else {
+      if (following === '#') {
         end = ++begin
 
         // The behaviour further depends on the character after the U+0023
@@ -211,6 +195,9 @@ function parse(value, settings) {
           // ASCII digits.
           type = DECIMAL
         }
+      } else {
+        // Numerical entity.
+        type = NAMED
       }
 
       entityCharacters = ''
@@ -278,9 +265,7 @@ function parse(value, settings) {
           if (!terminated) {
             reason = entityCharacters ? NAMED_NOT_TERMINATED : NAMED_EMPTY
 
-            if (!settings.attribute) {
-              warning(reason, diff)
-            } else {
+            if (settings.attribute) {
               following = at(end)
 
               if (following === '=') {
@@ -291,6 +276,8 @@ function parse(value, settings) {
               } else {
                 warning(reason, diff)
               }
+            } else {
+              warning(reason, diff)
             }
           }
         }
@@ -336,18 +323,9 @@ function parse(value, settings) {
         }
       }
 
-      // If we could not find a reference, queue the checked characters (as
-      // normal characters), and move the pointer to their end.
-      // This is possible because we can be certain neither newlines nor
-      // ampersands are included.
-      if (!reference) {
-        characters = value.slice(start - 1, end)
-        queue += characters
-        column += characters.length
-        index = end - 1
-      } else {
-        // Found it!
-        // First eat the queued characters as normal text, then eat an entity.
+      // Found it!
+      // First eat the queued characters as normal text, then eat an entity.
+      if (reference) {
         flush()
 
         prev = now()
@@ -367,6 +345,29 @@ function parse(value, settings) {
         }
 
         prev = next
+      } else {
+        // If we could not find a reference, queue the checked characters (as
+        // normal characters), and move the pointer to their end.
+        // This is possible because we can be certain neither newlines nor
+        // ampersands are included.
+        characters = value.slice(start - 1, end)
+        queue += characters
+        column += characters.length
+        index = end - 1
+      }
+    } else {
+      // Handle anything other than an ampersand, including newlines and EOF.
+      if (character === '\n') {
+        line++
+        lines++
+        column = 0
+      }
+
+      if (character) {
+        queue += character
+        column++
+      } else {
+        flush()
       }
     }
   }

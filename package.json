@@ -75,14 +75,8 @@
     "prettier": true,
     "esnext": false,
     "rules": {
-      "unicorn/number-literal-case": "off",
-      "object-shorthand": "off",
-      "no-var": "off",
-      "prefer-arrow-callback": "off",
       "guard-for-in": "off",
-      "no-negated-condition": "off",
-      "max-depth": "off",
-      "complexity": "off"
+      "max-depth": "off"
     },
     "ignores": [
       "parse-entities.js"
