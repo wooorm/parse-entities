@@ -48,7 +48,7 @@
     "xo": "^0.20.0"
   },
   "scripts": {
-    "format": "remark . -qfo && prettier --write '**/*.js' && xo --fix",
+    "format": "remark . -qfo && prettier --write \"**/*.js\" && xo --fix",
     "build-bundle": "browserify . -s parseEntities > parse-entities.js",
     "build-mangle": "browserify . -s parseEntities -p tinyify > parse-entities.min.js",
     "build": "npm run build-bundle && npm run build-mangle",
