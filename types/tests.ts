@@ -26,11 +26,9 @@ decode('alpha &amp bravo', {
   warning,
   warningContext
 })
+// prettier-ignore
 // $ExpectError
-decode('alpha &amp bravo', {
-  warning,
-  warningContext: invalidContext
-})
+decode('alpha &amp bravo', { warning, warningContext: invalidContext })
 
 interface TextContext {
   text: string
@@ -45,11 +43,9 @@ decode('alpha &amp bravo', {
   text,
   textContext
 })
+// prettier-ignore
 // $ExpectError
-decode('alpha &amp bravo', {
-  text,
-  textContext: invalidContext
-})
+decode('alpha &amp bravo', { text, textContext: invalidContext })
 
 interface ReferenceContext {
   reference: string
@@ -69,8 +65,6 @@ decode('alpha &amp bravo', {
   reference,
   referenceContext
 })
+// prettier-ignore
 // $ExpectError
-decode('alpha &amp bravo', {
-  reference,
-  referenceContext: invalidContext
-})
+decode('alpha &amp bravo', { reference, referenceContext: invalidContext })
