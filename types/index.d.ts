@@ -1,7 +1,11 @@
-// TypeScript Version: 3.0
+// TypeScript Version: 3.4
 
 declare namespace parseEntities {
-  interface ParseEntitiesOptions<WC = any, TC = any, RC = any> {
+  interface ParseEntitiesOptions<
+    WC = typeof globalThis,
+    TC = typeof globalThis,
+    RC = typeof globalThis
+  > {
     /**
      * Additional character to accept (`string?`, default: `''`).
      * This allows other characters, without error, when following an ampersand.
@@ -63,14 +67,17 @@ declare namespace parseEntities {
      * `this` refers to `warningContext` when given to `parseEntities`.
      */
     this: C,
+
     /**
      * Human-readable reason for triggering a parse error (`string`).
      */
     reason: string,
+
     /**
      * Place at which the parse error occurred (`Position`).
      */
     position: Position,
+
     /**
      * Identifier of reason for triggering a parse error (`number`).
      */
@@ -85,10 +92,12 @@ declare namespace parseEntities {
      * `this` refers to `textContext` when given to `parseEntities`.
      */
     this: C,
+
     /**
      * String of content (`string`).
      */
     value: string,
+
     /**
      * Location at which `value` starts and ends (`Location`).
      */
@@ -103,14 +112,17 @@ declare namespace parseEntities {
      * `this` refers to `textContext` when given to `parseEntities`.
      */
     this: C,
+
     /**
      * String of content (`string`).
      */
     value: string,
+
     /**
      * Location at which `value` starts and ends (`Location`).
      */
     location: Location,
+
     /**
      * Source of character reference (`Location`).
      */
@@ -133,7 +145,11 @@ declare namespace parseEntities {
 /**
  * Decode special characters in `value`.
  */
-declare function parseEntities<WC = any, TC = any, RC = any>(
+declare function parseEntities<
+  WC = typeof globalThis,
+  TC = typeof globalThis,
+  RC = typeof globalThis
+>(
   value: string,
   options?: Partial<parseEntities.ParseEntitiesOptions<WC, TC, RC>>
 ): string
