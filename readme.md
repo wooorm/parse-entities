@@ -5,8 +5,7 @@
 [![Downloads][downloads-badge]][downloads]
 [![Size][size-badge]][size]
 
-Parse HTML character references: fast, spec-compliant, positional
-information.
+Parse HTML character references: fast, spec-compliant, positional information.
 
 ## Install
 
@@ -44,14 +43,13 @@ This allows other characters, without error, when following an ampersand.
 
 ###### `options.attribute`
 
-Whether to parse `value` as an attribute value (`boolean?`, default:
-`false`).
+Whether to parse `value` as an attribute value (`boolean?`, default: `false`).
 
 ###### `options.nonTerminated`
 
 Whether to allow non-terminated entities (`boolean`, default: `true`).
-For example, `&copycat` for `©cat`.  This behaviour is spec-compliant but
-can lead to unexpected results.
+For example, `&copycat` for `©cat`.
+This behavior is spec-compliant but can lead to unexpected results.
 
 ###### `options.warning`
 
@@ -79,8 +77,9 @@ Context used when invoking `reference` (`'*'`, optional)
 
 ###### `options.position`
 
-Starting `position` of `value` (`Location` or `Position`, optional).  Useful
-when dealing with values nested in some sort of syntax tree.  The default is:
+Starting `position` of `value` (`Location` or `Position`, optional).
+Useful when dealing with values nested in some sort of syntax tree.
+The default is:
 
 ```js
 {
@@ -105,7 +104,7 @@ Error handler.
 
 ###### `reason`
 
-Human-readable reason for triggering a parse error (`string`).
+Human-readable reason the error (`string`).
 
 ###### `position`
 
@@ -113,7 +112,7 @@ Place at which the parse error occurred (`Position`).
 
 ###### `code`
 
-Identifier of reason for triggering a parse error (`number`).
+Machine-readable code for the error (`number`).
 
 The following codes are used:
 
