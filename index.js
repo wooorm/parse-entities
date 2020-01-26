@@ -28,18 +28,18 @@ var defaults = {
 }
 
 // Characters.
-var tab = 9 // '\t'
-var lineFeed = 10 // '\n'
-var formFeed = 12 // '\f'
-var space = 32 // ' '
-var ampersand = 38 // '&'
-var semicolon = 59 // ';'
-var lessThan = 60 // '<'
-var equalsTo = 61 // '='
-var numberSign = 35 // '#'
-var uppercaseX = 88 // 'X'
-var lowercaseX = 120 // 'x'
-var replacementCharacter = 65533 // '�'
+var tab = 9 // `\t`
+var lineFeed = 10 // `\n`
+var formFeed = 12 // `\f`
+var space = 32 // ` `
+var ampersand = 38 // `&`
+var semicolon = 59 // `;`
+var lessThan = 60 // `<`
+var equalsTo = 61 // `=`
+var numberSign = 35 // `#`
+var uppercaseX = 88 // `X`
+var lowercaseX = 120 // `x`
+var replacementCharacter = 65533 // `�`
 
 // Reference types.
 var name = 'named'
@@ -176,7 +176,7 @@ function parse(value, settings) {
     if (character === ampersand) {
       following = value.charCodeAt(index + 1)
 
-      // The behaviour depends on the identity of the next character.
+      // The behavior depends on the identity of the next character.
       if (
         following === tab ||
         following === lineFeed ||
@@ -201,18 +201,18 @@ function parse(value, settings) {
       end = start
 
       if (following === numberSign) {
-        // Numerical entity.
+        // Numerical reference.
         end = ++begin
 
-        // The behaviour further depends on the next character.
+        // The behavior further depends on the next character.
         following = value.charCodeAt(end)
 
         if (following === uppercaseX || following === lowercaseX) {
-          // ASCII hex digits.
+          // ASCII hexadecimal digits.
           type = hexa
           end = ++begin
         } else {
-          // ASCII digits.
+          // ASCII decimal digits.
           type = deci
         }
       } else {
@@ -262,7 +262,7 @@ function parse(value, settings) {
       if (!terminated && !nonTerminated) {
         // Empty.
       } else if (!characters) {
-        // An empty (possible) entity is valid, unless it’s numeric (thus an
+        // An empty (possible) reference is valid, unless it’s numeric (thus an
         // ampersand followed by an octothorp).
         if (type !== name) {
           warning(numericEmpty, diff)
@@ -305,34 +305,35 @@ function parse(value, settings) {
         reference = entity
       } else {
         if (!terminated) {
-          // All non-terminated numeric entities are not rendered, and trigger a
+          // All non-terminated numeric references are not rendered, and emit a
           // warning.
           warning(numericNotTerminated, diff)
         }
 
-        // When terminated and number, parse as either hexadecimal or decimal.
+        // When terminated and numerical, parse as either hexadecimal or
+        // decimal.
         reference = parseInt(characters, bases[type])
 
-        // Trigger a warning when the parsed number is prohibited, and replace
-        // with replacement character.
+        // Emit a warning when the parsed number is prohibited, and replace with
+        // replacement character.
         if (prohibited(reference)) {
           warning(numericProhibited, diff)
           reference = fromCharCode(replacementCharacter)
         } else if (reference in invalid) {
-          // Trigger a warning when the parsed number is disallowed, and replace
-          // by an alternative.
+          // Emit a warning when the parsed number is disallowed, and replace by
+          // an alternative.
           warning(numericDisallowed, diff)
           reference = invalid[reference]
         } else {
           // Parse the number.
           output = ''
 
-          // Trigger a warning when the parsed number should not be used.
+          // Emit a warning when the parsed number should not be used.
           if (disallowed(reference)) {
             warning(numericDisallowed, diff)
           }
 
-          // Stringify the number.
+          // Serialize the number.
           if (reference > 0xffff) {
             reference -= 0x10000
             output += fromCharCode((reference >>> (10 & 0x3ff)) | 0xd800)
@@ -344,7 +345,7 @@ function parse(value, settings) {
       }
 
       // Found it!
-      // First eat the queued characters as normal text, then eat an entity.
+      // First eat the queued characters as normal text, then eat a reference.
       if (reference) {
         flush()
 
@@ -377,9 +378,7 @@ function parse(value, settings) {
       }
     } else {
       // Handle anything other than an ampersand, including newlines and EOF.
-      if (
-        character === 10 // Line feed
-      ) {
+      if (character === lineFeed) {
         line++
         lines++
         column = 0
@@ -406,7 +405,7 @@ function parse(value, settings) {
     }
   }
 
-  // “Throw” a parse-error: a warning.
+  // Handle the warning.
   function parseError(code, offset) {
     var position = now()
 
@@ -417,7 +416,7 @@ function parse(value, settings) {
   }
 
   // Flush `queue` (normal text).
-  // Macro invoked before each entity and at the end of `value`.
+  // Macro invoked before each reference and at the end of `value`.
   // Does nothing when `queue` is empty.
   function flush() {
     if (queue) {
