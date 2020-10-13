@@ -3,7 +3,7 @@
 var test = require('tape')
 var decode = require('.')
 
-test('parseEntities(value)', function(t) {
+test('parseEntities(value)', function (t) {
   t.equal(
     decode('I’m &notit; though'),
     'I’m ¬it; though',
@@ -576,7 +576,7 @@ test('parseEntities(value)', function(t) {
 
     // Construct an `add`er for `type`.
     function addFactory(type) {
-      return function() {
+      return function () {
         result[type].push([].slice.apply(arguments))
       }
     }

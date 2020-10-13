@@ -145,7 +145,7 @@ function parse(value, settings) {
   var start
   var type
   var test
-  var prev
+  var previous
   var next
   var diff
   var end
@@ -155,7 +155,7 @@ function parse(value, settings) {
   }
 
   // Cache the current point.
-  prev = now()
+  previous = now()
 
   // Wrap `handleWarning`.
   warning = handleWarning ? parseError : noop
@@ -349,7 +349,7 @@ function parse(value, settings) {
       if (reference) {
         flush()
 
-        prev = now()
+        previous = now()
         index = end - 1
         column += end - start + 1
         result.push(reference)
@@ -360,12 +360,12 @@ function parse(value, settings) {
           handleReference.call(
             referenceContext,
             reference,
-            {start: prev, end: next},
+            {start: previous, end: next},
             value.slice(start - 1, end)
           )
         }
 
-        prev = next
+        previous = next
       } else {
         // If we could not find a reference, queue the checked characters (as
         // normal characters), and move the pointer to their end.
@@ -423,7 +423,7 @@ function parse(value, settings) {
       result.push(queue)
 
       if (handleText) {
-        handleText.call(textContext, queue, {start: prev, end: now()})
+        handleText.call(textContext, queue, {start: previous, end: now()})
       }
 
       queue = ''

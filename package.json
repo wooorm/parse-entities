@@ -43,19 +43,19 @@
     "is-hexadecimal": "^1.0.0"
   },
   "devDependencies": {
-    "browserify": "^16.0.0",
-    "dtslint": "^2.0.0",
+    "browserify": "^17.0.0",
+    "dtslint": "^4.0.0",
     "nyc": "^15.0.0",
-    "prettier": "^1.0.0",
-    "remark-cli": "^7.0.0",
-    "remark-preset-wooorm": "^6.0.0",
-    "tape": "^4.0.0",
-    "tape-run": "^6.0.0",
-    "tinyify": "^2.0.0",
-    "xo": "^0.25.0"
+    "prettier": "^2.0.0",
+    "remark-cli": "^9.0.0-alpha.1",
+    "remark-preset-wooorm": "^8.0.0",
+    "tape": "^5.0.0",
+    "tape-run": "^8.0.0",
+    "tinyify": "^3.0.0",
+    "xo": "^0.33.0"
   },
   "scripts": {
-    "format": "remark . -qfo && prettier --write \"**/*.{js,ts}\" && xo --fix",
+    "format": "remark . -qfo && prettier . -w --loglevel warn && xo --fix",
     "build-bundle": "browserify . -s parseEntities > parse-entities.js",
     "build-mangle": "browserify . -s parseEntities -p tinyify > parse-entities.min.js",
     "build": "npm run build-bundle && npm run build-mangle",
@@ -83,11 +83,13 @@
     "prettier": true,
     "esnext": false,
     "rules": {
-      "no-self-compare": "off",
       "guard-for-in": "off",
-      "max-depth": "off"
+      "max-depth": "off",
+      "no-self-compare": "off",
+      "unicorn/prefer-number-properties": "off"
     },
     "ignores": [
+      "types/",
       "parse-entities.js"
     ]
   },
