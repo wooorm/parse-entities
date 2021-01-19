@@ -185,9 +185,9 @@ Source of character reference (`Location`).
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/wooorm/parse-entities.svg
+[build-badge]: https://github.com/wooorm/parse-entities/workflows/main/badge.svg
 
-[build]: https://travis-ci.org/wooorm/parse-entities
+[build]: https://github.com/wooorm/parse-entities/actions
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/wooorm/parse-entities.svg
 
