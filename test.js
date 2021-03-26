@@ -562,32 +562,57 @@ test('parseEntities(value)', function (t) {
 
   t.end()
 
-  function assert(fixture, options) {
-    var settings = options || {}
+  /**
+   * @template {typeof globalThis} WarningContext
+   * @template {typeof globalThis} ReferenceContext
+   * @template {typeof globalThis} TextContext
+   * @param {string} fixture
+   * @param {Partial<import('./index.js').ParseEntitiesOptions<WarningContext, ReferenceContext, TextContext>>} [options={}]
+   */
+  function assert(fixture, options = {}) {
     var result = {
-      text: [],
+      result: '',
+      /** @type {Array.<[string, import('./index.js').Position, string]>} */
       reference: [],
+      /** @type {Array.<[string, import('./index.js').Position]>} */
+      text: [],
+      /** @type {Array.<[string, import('./index.js').Point, number]>} */
       warning: []
     }
 
-    // Construct an `add`er for `type`.
+    /**
+     * Construct an `add`er for `type`.
+     * @param {'text' | 'reference' | 'warning'} type
+     */
     function addFactory(type) {
-      return function () {
-        result[type].push([].slice.apply(arguments))
+      return add
+      /**
+       * @param {unknown[]} things
+       */
+      function add(...things) {
+        // @ts-ignore
+        result[type].push(things)
       }
     }
 
-    settings.text = addFactory('text')
-    settings.reference = addFactory('reference')
-    settings.warning = addFactory('warning')
-
-    result.result = parseEntities(fixture, settings)
+    options.text = addFactory('text')
+    options.reference = addFactory('reference')
+    options.warning = addFactory('warning')
+    result.result = parseEntities(fixture, options)
 
     return result
   }
 })
 
-// Utility to create a `location`.
+/**
+ * Utility to create a `position`.
+ * @param {number} aLine
+ * @param {number} aColumn
+ * @param {number} aOffset
+ * @param {number} bLine
+ * @param {number} bColumn
+ * @param {number} bOffset
+ */
 // eslint-disable-next-line max-params
 function position(aLine, aColumn, aOffset, bLine, bColumn, bOffset) {
   return {
@@ -596,7 +621,12 @@ function position(aLine, aColumn, aOffset, bLine, bColumn, bOffset) {
   }
 }
 
-// Utility to create a `position`.
+/**
+ * Utility to create a `point`.
+ * @param {number} line
+ * @param {number} column
+ * @param {number} offset
+ */
 function point(line, column, offset) {
   return {line, column, offset}
 }

@@ -1,10 +1,16 @@
 /* eslint-env browser */
 
 var semicolon = 59 // `;`
+/** @type {HTMLElement} */
 var element
 
+/**
+ * @param {string} characters
+ * @returns {string|false}
+ */
 export function decodeEntity(characters) {
   var entity = '&' + characters + ';'
+  /** @type {string} */
   var char
 
   element = element || document.createElement('i')
