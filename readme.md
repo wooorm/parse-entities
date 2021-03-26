@@ -81,22 +81,19 @@ Context used when invoking `reference` (`'*'`, optional)
 
 ###### `options.position`
 
-Starting `position` of `value` (`Location` or `Position`, optional).
+Starting `position` of `value` (`Position` or `Point`, optional).
 Useful when dealing with values nested in some sort of syntax tree.
 The default is:
 
 ```js
-{
-  start: {line: 1, column: 1, offset: 0},
-  indent: []
-}
+{line: 1, column: 1, offset: 0}
 ```
 
 ##### Returns
 
 `string` — Decoded `value`.
 
-### `function warning(reason, position, code)`
+### `function warning(reason, point, code)`
 
 Error handler.
 
@@ -110,9 +107,9 @@ Error handler.
 
 Human-readable reason the error (`string`).
 
-###### `position`
+###### `point`
 
-Place at which the parse error occurred (`Position`).
+Place at which the parse error occurred (`Point`).
 
 ###### `code`
 
@@ -130,7 +127,7 @@ The following codes are used:
 | `6`  | `Foo &#128; baz`   | [Disallowed reference][invalid]               |
 | `7`  | `Foo &#xD800; baz` | Prohibited: outside permissible unicode range |
 
-### `function text(value, location)`
+### `function text(value, position)`
 
 Text handler.
 
@@ -144,11 +141,11 @@ Text handler.
 
 String of content (`string`).
 
-###### `location`
+###### `position`
 
-Location at which `value` starts and ends (`Location`).
+Location at which `value` starts and ends (`Position`).
 
-### `function reference(value, location, source)`
+### `function reference(value, position, source)`
 
 Character reference handler.
 
@@ -162,13 +159,13 @@ Character reference handler.
 
 Encoded character reference (`string`).
 
-###### `location`
+###### `position`
 
-Location at which `value` starts and ends (`Location`).
+Location at which `value` starts and ends (`Position`).
 
 ###### `source`
 
-Source of character reference (`Location`).
+Source of character reference (`string`).
 
 ## Related
 
@@ -211,10 +208,10 @@ Source of character reference (`Location`).
 
 [author]: https://wooorm.com
 
-[warning]: #function-warningreason-position-code
+[warning]: #function-warningreason-point-code
 
-[text]: #function-textvalue-location
+[text]: #function-textvalue-position
 
-[reference]: #function-referencevalue-location-source
+[reference]: #function-referencevalue-position-source
 
 [invalid]: https://github.com/wooorm/character-reference-invalid
