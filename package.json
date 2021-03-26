@@ -14,9 +14,9 @@
   "repository": "wooorm/parse-entities",
   "bugs": "https://github.com/wooorm/parse-entities/issues",
   "funding": {
-     "type": "github",
-     "url": "https://github.com/sponsors/wooorm"
-   },
+    "type": "github",
+    "url": "https://github.com/sponsors/wooorm"
+  },
   "author": "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)"
@@ -52,7 +52,7 @@
     "tape": "^5.0.0",
     "tape-run": "^8.0.0",
     "tinyify": "^3.0.0",
-    "xo": "^0.37.0"
+    "xo": "^0.38.0"
   },
   "scripts": {
     "format": "remark . -qfo && prettier . -w --loglevel warn && xo --fix",
