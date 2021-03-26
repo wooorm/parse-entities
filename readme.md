@@ -9,6 +9,9 @@ Parse HTML character references: fast, spec-compliant, positional information.
 
 ## Install
 
+This package is ESM only: Node 12+ is needed to use it and it must be `import`ed
+instead of `require`d.
+
 [npm][]:
 
 ```sh
@@ -18,23 +21,24 @@ npm install parse-entities
 ## Use
 
 ```js
-var decode = require('parse-entities')
+import {parseEntities} from 'parse-entities'
 
-decode('alpha &amp bravo')
+parseEntities('alpha &amp bravo')
 // => alpha & bravo
 
-decode('charlie &copycat; delta')
+parseEntities('charlie &copycat; delta')
 // => charlie ©cat; delta
 
-decode('echo &copy; foxtrot &#8800; golf &#x1D306; hotel')
+parseEntities('echo &copy; foxtrot &#8800; golf &#x1D306; hotel')
 // => echo © foxtrot ≠ golf 𝌆 hotel
 ```
 
 ## API
 
-## `parseEntities(value[, options])`
+This package exports the following identifiers: `parseEntities`.
+There is no default export.
 
-##### `options`
+## `parseEntities(value[, options])`
 
 ###### `options.additional`
 

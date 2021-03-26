@@ -1,13 +1,9 @@
-'use strict'
-
-var legacy = require('character-entities-legacy')
-var invalid = require('character-reference-invalid')
-var decimal = require('is-decimal')
-var hexadecimal = require('is-hexadecimal')
-var alphanumerical = require('is-alphanumerical')
-var decodeEntity = require('./decode-entity')
-
-module.exports = parseEntities
+import {characterEntitiesLegacy} from 'character-entities-legacy'
+import {characterReferenceInvalid} from 'character-reference-invalid'
+import {isDecimal} from 'is-decimal'
+import {isHexadecimal} from 'is-hexadecimal'
+import {isAlphanumerical} from 'is-alphanumerical'
+import {decodeEntity} from './decode-entity.js'
 
 var own = {}.hasOwnProperty
 var fromCharCode = String.fromCharCode
@@ -32,8 +28,7 @@ var messages = [
 ]
 
 // Parse entities.
-// eslint-disable-next-line complexity
-function parseEntities(value, options) {
+export function parseEntities(value, options) {
   var settings = options || {}
   var additional =
     typeof settings.additional === 'string'
@@ -103,7 +98,7 @@ function parseEntities(value, options) {
         following === 32 /* ` ` */ ||
         following === 38 /* `&` */ ||
         following === 60 /* `<` */ ||
-        following !== following ||
+        Number.isNaN(following) ||
         (additional && following === additional)
       ) {
         // Not a character reference.
@@ -146,10 +141,10 @@ function parseEntities(value, options) {
       // is not strictly needed).
       test =
         type === 'named'
-          ? alphanumerical
+          ? isAlphanumerical
           : type === 'decimal'
-          ? decimal
-          : hexadecimal
+          ? isDecimal
+          : isHexadecimal
 
       end--
 
@@ -165,9 +160,9 @@ function parseEntities(value, options) {
         // Check if we can match a legacy named reference.
         // If so, we cache that as the last viable named reference.
         // This ensures we do not need to walk backwards later.
-        if (type === 'named' && own.call(legacy, characters)) {
+        if (type === 'named' && own.call(characterEntitiesLegacy, characters)) {
           entityCharacters = characters
-          entity = legacy[characters]
+          entity = characterEntitiesLegacy[characters]
         }
       }
 
@@ -220,7 +215,7 @@ function parseEntities(value, options) {
               if (following === 61 /* `=` */) {
                 warning(reason, diff)
                 entity = null
-              } else if (alphanumerical(following)) {
+              } else if (isAlphanumerical(following)) {
                 entity = null
               } else {
                 warning(reason, diff)
@@ -241,18 +236,21 @@ function parseEntities(value, options) {
 
         // When terminated and numerical, parse as either hexadecimal or
         // decimal.
-        reference = parseInt(characters, type === 'hexadecimal' ? 16 : 10)
+        reference = Number.parseInt(
+          characters,
+          type === 'hexadecimal' ? 16 : 10
+        )
 
         // Emit a warning when the parsed number is prohibited, and replace with
         // replacement character.
         if (prohibited(reference)) {
           warning(7 /* Prohibited (numeric) */, diff)
           reference = fromCharCode(65533 /* `�` */)
-        } else if (reference in invalid) {
+        } else if (reference in characterReferenceInvalid) {
           // Emit a warning when the parsed number is disallowed, and replace by
           // an alternative.
           warning(6 /* Disallowed (numeric) */, diff)
-          reference = invalid[reference]
+          reference = characterReferenceInvalid[reference]
         } else {
           // Parse the number.
           output = ''
@@ -313,11 +311,11 @@ function parseEntities(value, options) {
         column = 0
       }
 
-      if (character === character) {
+      if (Number.isNaN(character)) {
+        flush()
+      } else {
         queue += fromCharCode(character)
         column++
-      } else {
-        flush()
       }
     }
   }
@@ -328,8 +326,8 @@ function parseEntities(value, options) {
   // Get current position.
   function now() {
     return {
-      line: line,
-      column: column,
+      line,
+      column,
       offset: index + ((pos && pos.offset) || 0)
     }
   }

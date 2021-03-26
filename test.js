@@ -1,17 +1,15 @@
-'use strict'
-
-var test = require('tape')
-var decode = require('.')
+import test from 'tape'
+import {parseEntities} from './index.js'
 
 test('parseEntities(value)', function (t) {
   t.equal(
-    decode('I’m &notit; though'),
+    parseEntities('I’m &notit; though'),
     'I’m ¬it; though',
     'example #1 (without options)'
   )
 
   t.equal(
-    decode('I’m &notin; though'),
+    parseEntities('I’m &notin; though'),
     'I’m ∉ though',
     'example #2 (without options)'
   )
@@ -20,10 +18,10 @@ test('parseEntities(value)', function (t) {
     assert('foo &amp; bar'),
     {
       result: 'foo & bar',
-      reference: [['&', location(1, 5, 4, 1, 10, 9), '&amp;']],
+      reference: [['&', position(1, 5, 4, 1, 10, 9), '&amp;']],
       text: [
-        ['foo ', location(1, 1, 0, 1, 5, 4)],
-        [' bar', location(1, 10, 9, 1, 14, 13)]
+        ['foo ', position(1, 1, 0, 1, 5, 4)],
+        [' bar', position(1, 10, 9, 1, 14, 13)]
       ],
       warning: []
     },
@@ -34,10 +32,10 @@ test('parseEntities(value)', function (t) {
     assert('foo &#123; bar'),
     {
       result: 'foo { bar',
-      reference: [['{', location(1, 5, 4, 1, 11, 10), '&#123;']],
+      reference: [['{', position(1, 5, 4, 1, 11, 10), '&#123;']],
       text: [
-        ['foo ', location(1, 1, 0, 1, 5, 4)],
-        [' bar', location(1, 11, 10, 1, 15, 14)]
+        ['foo ', position(1, 1, 0, 1, 5, 4)],
+        [' bar', position(1, 11, 10, 1, 15, 14)]
       ],
       warning: []
     },
@@ -48,10 +46,10 @@ test('parseEntities(value)', function (t) {
     assert('foo &#x123; bar'),
     {
       result: 'foo ģ bar',
-      reference: [['ģ', location(1, 5, 4, 1, 12, 11), '&#x123;']],
+      reference: [['ģ', position(1, 5, 4, 1, 12, 11), '&#x123;']],
       text: [
-        ['foo ', location(1, 1, 0, 1, 5, 4)],
-        [' bar', location(1, 12, 11, 1, 16, 15)]
+        ['foo ', position(1, 1, 0, 1, 5, 4)],
+        [' bar', position(1, 12, 11, 1, 16, 15)]
       ],
       warning: []
     },
@@ -62,8 +60,8 @@ test('parseEntities(value)', function (t) {
     assert('&amp; bar'),
     {
       result: '& bar',
-      reference: [['&', location(1, 1, 0, 1, 6, 5), '&amp;']],
-      text: [[' bar', location(1, 6, 5, 1, 10, 9)]],
+      reference: [['&', position(1, 1, 0, 1, 6, 5), '&amp;']],
+      text: [[' bar', position(1, 6, 5, 1, 10, 9)]],
       warning: []
     },
     'should work when the entity is initial'
@@ -73,8 +71,8 @@ test('parseEntities(value)', function (t) {
     assert('foo &amp;'),
     {
       result: 'foo &',
-      reference: [['&', location(1, 5, 4, 1, 10, 9), '&amp;']],
-      text: [['foo ', location(1, 1, 0, 1, 5, 4)]],
+      reference: [['&', position(1, 5, 4, 1, 10, 9), '&amp;']],
+      text: [['foo ', position(1, 1, 0, 1, 5, 4)]],
       warning: []
     },
     'should work when the entity is final'
@@ -85,9 +83,9 @@ test('parseEntities(value)', function (t) {
     {
       result: '&{ģ',
       reference: [
-        ['&', location(1, 1, 0, 1, 6, 5), '&amp;'],
-        ['{', location(1, 6, 5, 1, 12, 11), '&#123;'],
-        ['ģ', location(1, 12, 11, 1, 19, 18), '&#x123;']
+        ['&', position(1, 1, 0, 1, 6, 5), '&amp;'],
+        ['{', position(1, 6, 5, 1, 12, 11), '&#123;'],
+        ['ģ', position(1, 12, 11, 1, 19, 18), '&#x123;']
       ],
       text: [],
       warning: []
@@ -99,15 +97,15 @@ test('parseEntities(value)', function (t) {
     assert('foo &amp bar'),
     {
       result: 'foo & bar',
-      reference: [['&', location(1, 5, 4, 1, 9, 8), '&amp']],
+      reference: [['&', position(1, 5, 4, 1, 9, 8), '&amp']],
       text: [
-        ['foo ', location(1, 1, 0, 1, 5, 4)],
-        [' bar', location(1, 9, 8, 1, 13, 12)]
+        ['foo ', position(1, 1, 0, 1, 5, 4)],
+        [' bar', position(1, 9, 8, 1, 13, 12)]
       ],
       warning: [
         [
           'Named character references must be terminated by a semicolon',
-          position(1, 9, 8),
+          point(1, 9, 8),
           1
         ]
       ]
@@ -120,7 +118,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'foo &amp bar',
       reference: [],
-      text: [['foo &amp bar', location(1, 1, 0, 1, 13, 12)]],
+      text: [['foo &amp bar', position(1, 1, 0, 1, 13, 12)]],
       warning: []
     },
     'should work if `nonTerminated` is given'
@@ -130,15 +128,15 @@ test('parseEntities(value)', function (t) {
     assert('foo &#123 bar'),
     {
       result: 'foo { bar',
-      reference: [['{', location(1, 5, 4, 1, 10, 9), '&#123']],
+      reference: [['{', position(1, 5, 4, 1, 10, 9), '&#123']],
       text: [
-        ['foo ', location(1, 1, 0, 1, 5, 4)],
-        [' bar', location(1, 10, 9, 1, 14, 13)]
+        ['foo ', position(1, 1, 0, 1, 5, 4)],
+        [' bar', position(1, 10, 9, 1, 14, 13)]
       ],
       warning: [
         [
           'Numeric character references must be terminated by a semicolon',
-          position(1, 10, 9),
+          point(1, 10, 9),
           2
         ]
       ]
@@ -151,7 +149,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &\tbar',
       reference: [],
-      text: [['Foo &\tbar', location(1, 1, 0, 1, 10, 9)]],
+      text: [['Foo &\tbar', position(1, 1, 0, 1, 10, 9)]],
       warning: []
     },
     'should work on an ampersand followed by a tab'
@@ -162,7 +160,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &\nbar',
       reference: [],
-      text: [['Foo &\nbar', location(1, 1, 0, 2, 4, 9)]],
+      text: [['Foo &\nbar', position(1, 1, 0, 2, 4, 9)]],
       warning: []
     },
     'should work on an ampersand followed by a newline'
@@ -173,7 +171,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &\fbar',
       reference: [],
-      text: [['Foo &\fbar', location(1, 1, 0, 1, 10, 9)]],
+      text: [['Foo &\fbar', position(1, 1, 0, 1, 10, 9)]],
       warning: []
     },
     'should work on an ampersand followed by a form-feed'
@@ -184,7 +182,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo & bar',
       reference: [],
-      text: [['Foo & bar', location(1, 1, 0, 1, 10, 9)]],
+      text: [['Foo & bar', position(1, 1, 0, 1, 10, 9)]],
       warning: []
     },
     'should work on an ampersand followed by a space'
@@ -195,7 +193,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &<bar',
       reference: [],
-      text: [['Foo &<bar', location(1, 1, 0, 1, 10, 9)]],
+      text: [['Foo &<bar', position(1, 1, 0, 1, 10, 9)]],
       warning: []
     },
     'should work on an ampersand followed by a `<`'
@@ -206,11 +204,11 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &&bar',
       reference: [],
-      text: [['Foo &&bar', location(1, 1, 0, 1, 10, 9)]],
+      text: [['Foo &&bar', position(1, 1, 0, 1, 10, 9)]],
       // The warning here is for the following ampersand, followed by `bar`,
       // which is not an entity.
       warning: [
-        ['Named character references cannot be empty', position(1, 7, 6), 3]
+        ['Named character references cannot be empty', point(1, 7, 6), 3]
       ]
     },
     'should work on an ampersand followed by another ampersand'
@@ -221,7 +219,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &',
       reference: [],
-      text: [['Foo &', location(1, 1, 0, 1, 6, 5)]],
+      text: [['Foo &', position(1, 1, 0, 1, 6, 5)]],
       warning: []
     },
     'should work on an ampersand followed by EOF'
@@ -232,7 +230,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &"',
       reference: [],
-      text: [['Foo &"', location(1, 1, 0, 1, 7, 6)]],
+      text: [['Foo &"', position(1, 1, 0, 1, 7, 6)]],
       warning: []
     },
     'should work on an ampersand followed by an additional character'
@@ -243,7 +241,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'foo&ampbar',
       reference: [],
-      text: [['foo&ampbar', location(1, 1, 0, 1, 11, 10)]],
+      text: [['foo&ampbar', position(1, 1, 0, 1, 11, 10)]],
       warning: []
     },
     'should work on an attribute #1'
@@ -255,10 +253,10 @@ test('parseEntities(value)', function (t) {
     }),
     {
       result: 'foo&bar',
-      reference: [['&', location(1, 4, 3, 1, 9, 8), '&amp;']],
+      reference: [['&', position(1, 4, 3, 1, 9, 8), '&amp;']],
       text: [
-        ['foo', location(1, 1, 0, 1, 4, 3)],
-        ['bar', location(1, 9, 8, 1, 12, 11)]
+        ['foo', position(1, 1, 0, 1, 4, 3)],
+        ['bar', position(1, 9, 8, 1, 12, 11)]
       ],
       warning: []
     },
@@ -269,8 +267,8 @@ test('parseEntities(value)', function (t) {
     assert('foo&amp;', {attribute: true}),
     {
       result: 'foo&',
-      reference: [['&', location(1, 4, 3, 1, 9, 8), '&amp;']],
-      text: [['foo', location(1, 1, 0, 1, 4, 3)]],
+      reference: [['&', position(1, 4, 3, 1, 9, 8), '&amp;']],
+      text: [['foo', position(1, 1, 0, 1, 4, 3)]],
       warning: []
     },
     'should work on an attribute #3'
@@ -281,11 +279,11 @@ test('parseEntities(value)', function (t) {
     {
       result: 'foo&amp=',
       reference: [],
-      text: [['foo&amp=', location(1, 1, 0, 1, 9, 8)]],
+      text: [['foo&amp=', position(1, 1, 0, 1, 9, 8)]],
       warning: [
         [
           'Named character references must be terminated by a semicolon',
-          position(1, 8, 7),
+          point(1, 8, 7),
           1
         ]
       ]
@@ -297,12 +295,12 @@ test('parseEntities(value)', function (t) {
     assert('foo&amp', {attribute: true}),
     {
       result: 'foo&',
-      reference: [['&', location(1, 4, 3, 1, 8, 7), '&amp']],
-      text: [['foo', location(1, 1, 0, 1, 4, 3)]],
+      reference: [['&', position(1, 4, 3, 1, 8, 7), '&amp']],
+      text: [['foo', position(1, 1, 0, 1, 4, 3)]],
       warning: [
         [
           'Named character references must be terminated by a semicolon',
-          position(1, 8, 7),
+          point(1, 8, 7),
           1
         ]
       ]
@@ -315,7 +313,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'foo&amplol',
       reference: [],
-      text: [['foo&amplol', location(1, 1, 0, 1, 11, 10)]],
+      text: [['foo&amplol', position(1, 1, 0, 1, 11, 10)]],
       warning: []
     },
     'should work on an attribute #6'
@@ -326,9 +324,9 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &#',
       reference: [],
-      text: [['Foo &#', location(1, 1, 0, 1, 7, 6)]],
+      text: [['Foo &#', position(1, 1, 0, 1, 7, 6)]],
       warning: [
-        ['Numeric character references cannot be empty', position(1, 7, 6), 4]
+        ['Numeric character references cannot be empty', point(1, 7, 6), 4]
       ]
     },
     'should warn when numeric and empty'
@@ -339,7 +337,7 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &=',
       reference: [],
-      text: [['Foo &=', location(1, 1, 0, 1, 7, 6)]],
+      text: [['Foo &=', position(1, 1, 0, 1, 7, 6)]],
       warning: []
     },
     'should not warn when empty and not numeric'
@@ -350,10 +348,8 @@ test('parseEntities(value)', function (t) {
     {
       result: 'Foo &bar; baz',
       reference: [],
-      text: [['Foo &bar; baz', location(1, 1, 0, 1, 14, 13)]],
-      warning: [
-        ['Named character references must be known', position(1, 6, 5), 5]
-      ]
+      text: [['Foo &bar; baz', position(1, 1, 0, 1, 14, 13)]],
+      warning: [['Named character references must be known', point(1, 6, 5), 5]]
     },
     'should warn when unknown and terminated'
   )
@@ -362,16 +358,16 @@ test('parseEntities(value)', function (t) {
     assert('Foo &#xD800; baz'),
     {
       result: 'Foo \uFFFD baz',
-      reference: [['\uFFFD', location(1, 5, 4, 1, 13, 12), '&#xD800;']],
+      reference: [['\uFFFD', position(1, 5, 4, 1, 13, 12), '&#xD800;']],
       text: [
-        ['Foo ', location(1, 1, 0, 1, 5, 4)],
-        [' baz', location(1, 13, 12, 1, 17, 16)]
+        ['Foo ', position(1, 1, 0, 1, 5, 4)],
+        [' baz', position(1, 13, 12, 1, 17, 16)]
       ],
       warning: [
         [
           'Numeric character references cannot be outside the permissible ' +
             'Unicode range',
-          position(1, 13, 12),
+          point(1, 13, 12),
           7
         ]
       ]
@@ -383,15 +379,15 @@ test('parseEntities(value)', function (t) {
     assert('Foo &#128; baz'),
     {
       result: 'Foo € baz',
-      reference: [['€', location(1, 5, 4, 1, 11, 10), '&#128;']],
+      reference: [['€', position(1, 5, 4, 1, 11, 10), '&#128;']],
       text: [
-        ['Foo ', location(1, 1, 0, 1, 5, 4)],
-        [' baz', location(1, 11, 10, 1, 15, 14)]
+        ['Foo ', position(1, 1, 0, 1, 5, 4)],
+        [' baz', position(1, 11, 10, 1, 15, 14)]
       ],
       warning: [
         [
           'Numeric character references cannot be disallowed',
-          position(1, 11, 10),
+          point(1, 11, 10),
           6
         ]
       ]
@@ -403,15 +399,15 @@ test('parseEntities(value)', function (t) {
     assert('Foo &#xfdee; baz'),
     {
       result: 'Foo \uFDEE baz',
-      reference: [['\uFDEE', location(1, 5, 4, 1, 13, 12), '&#xfdee;']],
+      reference: [['\uFDEE', position(1, 5, 4, 1, 13, 12), '&#xfdee;']],
       text: [
-        ['Foo ', location(1, 1, 0, 1, 5, 4)],
-        [' baz', location(1, 13, 12, 1, 17, 16)]
+        ['Foo ', position(1, 1, 0, 1, 5, 4)],
+        [' baz', position(1, 13, 12, 1, 17, 16)]
       ],
       warning: [
         [
           'Numeric character references cannot be disallowed',
-          position(1, 13, 12),
+          point(1, 13, 12),
           6
         ]
       ]
@@ -423,10 +419,10 @@ test('parseEntities(value)', function (t) {
     assert('Foo &#x1F44D; baz'),
     {
       result: 'Foo 👍 baz',
-      reference: [['👍', location(1, 5, 4, 1, 14, 13), '&#x1F44D;']],
+      reference: [['👍', position(1, 5, 4, 1, 14, 13), '&#x1F44D;']],
       text: [
-        ['Foo ', location(1, 1, 0, 1, 5, 4)],
-        [' baz', location(1, 14, 13, 1, 18, 17)]
+        ['Foo ', position(1, 1, 0, 1, 5, 4)],
+        [' baz', position(1, 14, 13, 1, 18, 17)]
       ],
       warning: []
     },
@@ -435,18 +431,18 @@ test('parseEntities(value)', function (t) {
 
   t.deepEqual(
     assert('foo&amp;bar\n&not;baz', {
-      position: position(3, 5, 12)
+      position: point(3, 5, 12)
     }),
     {
       result: 'foo&bar\n¬baz',
       reference: [
-        ['&', location(3, 8, 15, 3, 13, 20), '&amp;'],
-        ['¬', location(4, 1, 24, 4, 6, 29), '&not;']
+        ['&', position(3, 8, 15, 3, 13, 20), '&amp;'],
+        ['¬', position(4, 1, 24, 4, 6, 29), '&not;']
       ],
       text: [
-        ['foo', location(3, 5, 12, 3, 8, 15)],
-        ['bar\n', location(3, 13, 20, 4, 1, 24)],
-        ['baz', location(4, 6, 29, 4, 9, 32)]
+        ['foo', position(3, 5, 12, 3, 8, 15)],
+        ['bar\n', position(3, 13, 20, 4, 1, 24)],
+        ['baz', position(4, 6, 29, 4, 9, 32)]
       ],
       warning: []
     },
@@ -455,18 +451,18 @@ test('parseEntities(value)', function (t) {
 
   t.deepEqual(
     assert('foo&amp;bar\n&not;baz', {
-      position: location(3, 5, 12, 4, 9, 32)
+      position: position(3, 5, 12, 4, 9, 32)
     }),
     {
       result: 'foo&bar\n¬baz',
       reference: [
-        ['&', location(3, 8, 15, 3, 13, 20), '&amp;'],
-        ['¬', location(4, 1, 24, 4, 6, 29), '&not;']
+        ['&', position(3, 8, 15, 3, 13, 20), '&amp;'],
+        ['¬', position(4, 1, 24, 4, 6, 29), '&not;']
       ],
       text: [
-        ['foo', location(3, 5, 12, 3, 8, 15)],
-        ['bar\n', location(3, 13, 20, 4, 1, 24)],
-        ['baz', location(4, 6, 29, 4, 9, 32)]
+        ['foo', position(3, 5, 12, 3, 8, 15)],
+        ['bar\n', position(3, 13, 20, 4, 1, 24)],
+        ['baz', position(4, 6, 29, 4, 9, 32)]
       ],
       warning: []
     },
@@ -476,21 +472,21 @@ test('parseEntities(value)', function (t) {
   t.deepEqual(
     assert('foo&amp;bar\n&not;baz', {
       position: {
-        start: position(3, 5, 12),
-        end: position(4, 9, 32),
+        start: point(3, 5, 12),
+        end: point(4, 9, 32),
         indent: [5]
       }
     }),
     {
       result: 'foo&bar\n¬baz',
       reference: [
-        ['&', location(3, 8, 15, 3, 13, 20), '&amp;'],
-        ['¬', location(4, 5, 24, 4, 10, 29), '&not;']
+        ['&', position(3, 8, 15, 3, 13, 20), '&amp;'],
+        ['¬', position(4, 5, 24, 4, 10, 29), '&not;']
       ],
       text: [
-        ['foo', location(3, 5, 12, 3, 8, 15)],
-        ['bar\n', location(3, 13, 20, 4, 5, 24)],
-        ['baz', location(4, 10, 29, 4, 13, 32)]
+        ['foo', position(3, 5, 12, 3, 8, 15)],
+        ['bar\n', position(3, 13, 20, 4, 5, 24)],
+        ['baz', position(4, 10, 29, 4, 13, 32)]
       ],
       warning: []
     },
@@ -501,15 +497,15 @@ test('parseEntities(value)', function (t) {
     assert('I’m &notit; though'),
     {
       result: 'I’m ¬it; though',
-      reference: [['¬', location(1, 5, 4, 1, 9, 8), '&not']],
+      reference: [['¬', position(1, 5, 4, 1, 9, 8), '&not']],
       text: [
-        ['I’m ', location(1, 1, 0, 1, 5, 4)],
-        ['it; though', location(1, 9, 8, 1, 19, 18)]
+        ['I’m ', position(1, 1, 0, 1, 5, 4)],
+        ['it; though', position(1, 9, 8, 1, 19, 18)]
       ],
       warning: [
         [
           'Named character references must be terminated by a semicolon',
-          position(1, 9, 8),
+          point(1, 9, 8),
           1
         ]
       ]
@@ -521,10 +517,10 @@ test('parseEntities(value)', function (t) {
     assert('I’m &notin; though'),
     {
       result: 'I’m ∉ though',
-      reference: [['∉', location(1, 5, 4, 1, 12, 11), '&notin;']],
+      reference: [['∉', position(1, 5, 4, 1, 12, 11), '&notin;']],
       text: [
-        ['I’m ', location(1, 1, 0, 1, 5, 4)],
-        [' though', location(1, 12, 11, 1, 19, 18)]
+        ['I’m ', position(1, 1, 0, 1, 5, 4)],
+        [' though', position(1, 12, 11, 1, 19, 18)]
       ],
       warning: []
     },
@@ -535,15 +531,15 @@ test('parseEntities(value)', function (t) {
     assert('I’m &AMPed though'),
     {
       result: 'I’m &ed though',
-      reference: [['&', location(1, 5, 4, 1, 9, 8), '&AMP']],
+      reference: [['&', position(1, 5, 4, 1, 9, 8), '&AMP']],
       text: [
-        ['I’m ', location(1, 1, 0, 1, 5, 4)],
-        ['ed though', location(1, 9, 8, 1, 18, 17)]
+        ['I’m ', position(1, 1, 0, 1, 5, 4)],
+        ['ed though', position(1, 9, 8, 1, 18, 17)]
       ],
       warning: [
         [
           'Named character references must be terminated by a semicolon',
-          position(1, 9, 8),
+          point(1, 9, 8),
           1
         ]
       ]
@@ -556,9 +552,9 @@ test('parseEntities(value)', function (t) {
     {
       result: 'I’m &circled though',
       reference: [],
-      text: [['I’m &circled though', location(1, 1, 0, 1, 20, 19)]],
+      text: [['I’m &circled though', position(1, 1, 0, 1, 20, 19)]],
       warning: [
-        ['Named character references cannot be empty', position(1, 6, 5), 3]
+        ['Named character references cannot be empty', point(1, 6, 5), 3]
       ]
     },
     'non-legacy entity characters'
@@ -585,7 +581,7 @@ test('parseEntities(value)', function (t) {
     settings.reference = addFactory('reference')
     settings.warning = addFactory('warning')
 
-    result.result = decode(fixture, settings)
+    result.result = parseEntities(fixture, settings)
 
     return result
   }
@@ -593,14 +589,14 @@ test('parseEntities(value)', function (t) {
 
 // Utility to create a `location`.
 // eslint-disable-next-line max-params
-function location(aLine, aColumn, aOffset, bLine, bColumn, bOffset) {
+function position(aLine, aColumn, aOffset, bLine, bColumn, bOffset) {
   return {
-    start: position(aLine, aColumn, aOffset),
-    end: position(bLine, bColumn, bOffset)
+    start: point(aLine, aColumn, aOffset),
+    end: point(bLine, bColumn, bOffset)
   }
 }
 
 // Utility to create a `position`.
-function position(line, column, offset) {
-  return {line: line, column: column, offset: offset}
+function point(line, column, offset) {
+  return {line, column, offset}
 }

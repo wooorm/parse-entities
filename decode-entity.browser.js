@@ -1,14 +1,9 @@
-'use strict'
-
 /* eslint-env browser */
 
+var semicolon = 59 // `;`
 var element
 
-var semicolon = 59 // `;`
-
-module.exports = decodeEntity
-
-function decodeEntity(characters) {
+export function decodeEntity(characters) {
   var entity = '&' + characters + ';'
   var char
 
