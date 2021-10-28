@@ -101,72 +101,32 @@ export function parseEntities(value, options = {}) {
     typeof options.additional === 'string'
       ? options.additional.charCodeAt(0)
       : options.additional
+  /** @type {string[]} */
+  const result = []
   let index = 0
   let lines = -1
   let queue = ''
-  /** @type {string[]} */
-  const result = []
-  /** @type {Point?} */
-  let pos
-  /** @type {number[]?} */
+  /** @type {Point|undefined} */
+  let point
+  /** @type {number[]|undefined} */
   let indent
-  /** @type {number} */
-  let line
-  /** @type {number} */
-  let column
-  /** @type {string} */
-  let entityCharacters
-  /** @type {string|false} */
-  let namedEntity
-  /** @type {boolean} */
-  let terminated
-  /** @type {string} */
-  let characters
-  /** @type {number} */
-  let character
-  /** @type {string} */
-  let reference
-  /** @type {number} */
-  let referenceCode
-  /** @type {number} */
-  let following
-  /** @type {number} */
-  let reason
-  /** @type {string} */
-  let output
-  /** @type {string} */
-  let entity
-  /** @type {number} */
-  let begin
-  /** @type {number} */
-  let start
-  /** @type {string} */
-  let type
-  /** @type {(code: number) => boolean} */
-  let test
-  /** @type {Point} */
-  let previous
-  /** @type {Point} */
-  let next
-  /** @type {number} */
-  let diff
-  /** @type {number} */
-  let end
 
   if (options.position) {
     if ('start' in options.position || 'indent' in options.position) {
       indent = options.position.indent
-      pos = options.position.start
+      point = options.position.start
     } else {
-      pos = options.position
+      point = options.position
     }
   }
 
-  line = (pos && pos.line) || 1
-  column = (pos && pos.column) || 1
+  let line = (point ? point.line : 0) || 1
+  let column = (point ? point.column : 0) || 1
 
   // Cache the current point.
-  previous = now()
+  let previous = now()
+  /** @type {number} */
+  let character
 
   // Ensure the algorithm walks over the first character (inclusive).
   index--
@@ -174,13 +134,13 @@ export function parseEntities(value, options = {}) {
   while (++index <= value.length) {
     // If the previous character was a newline.
     if (character === 10 /* `\n` */) {
-      column = (indent && indent[lines]) || 1
+      column = (indent ? indent[lines] : 0) || 1
     }
 
     character = value.charCodeAt(index)
 
     if (character === 38 /* `&` */) {
-      following = value.charCodeAt(index + 1)
+      const following = value.charCodeAt(index + 1)
 
       // The behavior depends on the identity of the next character.
       if (
@@ -201,16 +161,18 @@ export function parseEntities(value, options = {}) {
         continue
       }
 
-      start = index + 1
-      begin = start
-      end = start
+      const start = index + 1
+      let begin = start
+      let end = start
+      /** @type {string} */
+      let type
 
       if (following === 35 /* `#` */) {
         // Numerical reference.
         end = ++begin
 
         // The behavior further depends on the next character.
-        following = value.charCodeAt(end)
+        const following = value.charCodeAt(end)
 
         if (following === 88 /* `X` */ || following === 120 /* `x` */) {
           // ASCII hexadecimal digits.
@@ -225,13 +187,13 @@ export function parseEntities(value, options = {}) {
         type = 'named'
       }
 
-      entityCharacters = ''
-      entity = ''
-      characters = ''
+      let entityCharacters = ''
+      let entity = ''
+      let characters = ''
       // Each type of character reference accepts different characters.
       // This test is used to detect whether a reference has ended (as the semicolon
       // is not strictly needed).
-      test =
+      const test =
         type === 'named'
           ? isAlphanumerical
           : type === 'decimal'
@@ -241,7 +203,7 @@ export function parseEntities(value, options = {}) {
       end--
 
       while (++end <= value.length) {
-        following = value.charCodeAt(end)
+        const following = value.charCodeAt(end)
 
         if (!test(following)) {
           break
@@ -258,12 +220,12 @@ export function parseEntities(value, options = {}) {
         }
       }
 
-      terminated = value.charCodeAt(end) === 59 /* `;` */
+      let terminated = value.charCodeAt(end) === 59 /* `;` */
 
       if (terminated) {
         end++
 
-        namedEntity = type === 'named' ? decodeEntity(characters) : false
+        const namedEntity = type === 'named' ? decodeEntity(characters) : false
 
         if (namedEntity) {
           entityCharacters = characters
@@ -271,7 +233,9 @@ export function parseEntities(value, options = {}) {
         }
       }
 
-      diff = 1 + end - start
+      let diff = 1 + end - start
+      /** @type {string} */
+      let reference
 
       if (!terminated && options.nonTerminated === false) {
         // Empty.
@@ -287,7 +251,7 @@ export function parseEntities(value, options = {}) {
         if (terminated && !entity) {
           warning(5 /* Unknown (named) */, 1)
         } else {
-          // If theres something after an entity name which is not known, cap
+          // If there’s something after an entity name which is not known, cap
           // the reference.
           if (entityCharacters !== characters) {
             end = begin + entityCharacters.length
@@ -297,12 +261,12 @@ export function parseEntities(value, options = {}) {
 
           // If the reference is not terminated, warn.
           if (!terminated) {
-            reason = entityCharacters
+            const reason = entityCharacters
               ? 1 /* Non terminated (named) */
               : 3 /* Empty (named) */
 
             if (options.attribute) {
-              following = value.charCodeAt(end)
+              const following = value.charCodeAt(end)
 
               if (following === 61 /* `=` */) {
                 warning(reason, diff)
@@ -328,7 +292,7 @@ export function parseEntities(value, options = {}) {
 
         // When terminated and numerical, parse as either hexadecimal or
         // decimal.
-        referenceCode = Number.parseInt(
+        let referenceCode = Number.parseInt(
           characters,
           type === 'hexadecimal' ? 16 : 10
         )
@@ -345,7 +309,7 @@ export function parseEntities(value, options = {}) {
           reference = characterReferenceInvalid[referenceCode]
         } else {
           // Parse the number.
-          output = ''
+          let output = ''
 
           // Emit a warning when the parsed number should not be used.
           if (disallowed(referenceCode)) {
@@ -372,7 +336,7 @@ export function parseEntities(value, options = {}) {
         index = end - 1
         column += end - start + 1
         result.push(reference)
-        next = now()
+        const next = now()
         next.offset++
 
         if (options.reference) {
@@ -420,7 +384,7 @@ export function parseEntities(value, options = {}) {
     return {
       line,
       column,
-      offset: index + ((pos && pos.offset) || 0)
+      offset: index + ((point ? point.offset : 0) || 0)
     }
   }
 

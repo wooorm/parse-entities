@@ -3,11 +3,9 @@ import {characterEntities} from 'character-entities'
 const own = {}.hasOwnProperty
 
 /**
- * @param {string} characters
+ * @param {string} value
  * @returns {string|false}
  */
-export function decodeEntity(characters) {
-  return own.call(characterEntities, characters)
-    ? characterEntities[characters]
-    : false
+export function decodeEntity(value) {
+  return own.call(characterEntities, value) ? characterEntities[value] : false
 }
