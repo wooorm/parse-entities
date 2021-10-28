@@ -65,11 +65,11 @@ import {decodeEntity} from './decode-entity.js'
  * @returns {void}
  */
 
-var own = {}.hasOwnProperty
-var fromCharCode = String.fromCharCode
+const own = {}.hasOwnProperty
+const fromCharCode = String.fromCharCode
 
 // Warning messages.
-var messages = [
+const messages = [
   undefined,
   /* 1: Non terminated (named) */
   'Named character references must be terminated by a semicolon',
@@ -97,61 +97,61 @@ var messages = [
  * @param {Partial<ParseEntitiesOptions<WarningContext, ReferenceContext, TextContext>>} [options={}]
  */
 export function parseEntities(value, options = {}) {
-  var additional =
+  const additional =
     typeof options.additional === 'string'
       ? options.additional.charCodeAt(0)
       : options.additional
-  var index = 0
-  var lines = -1
-  var queue = ''
+  let index = 0
+  let lines = -1
+  let queue = ''
   /** @type {string[]} */
-  var result = []
+  const result = []
   /** @type {Point?} */
-  var pos
+  let pos
   /** @type {number[]?} */
-  var indent
+  let indent
   /** @type {number} */
-  var line
+  let line
   /** @type {number} */
-  var column
+  let column
   /** @type {string} */
-  var entityCharacters
+  let entityCharacters
   /** @type {string|false} */
-  var namedEntity
+  let namedEntity
   /** @type {boolean} */
-  var terminated
+  let terminated
   /** @type {string} */
-  var characters
+  let characters
   /** @type {number} */
-  var character
+  let character
   /** @type {string} */
-  var reference
+  let reference
   /** @type {number} */
-  var referenceCode
+  let referenceCode
   /** @type {number} */
-  var following
+  let following
   /** @type {number} */
-  var reason
+  let reason
   /** @type {string} */
-  var output
+  let output
   /** @type {string} */
-  var entity
+  let entity
   /** @type {number} */
-  var begin
+  let begin
   /** @type {number} */
-  var start
+  let start
   /** @type {string} */
-  var type
+  let type
   /** @type {(code: number) => boolean} */
-  var test
+  let test
   /** @type {Point} */
-  var previous
+  let previous
   /** @type {Point} */
-  var next
+  let next
   /** @type {number} */
-  var diff
+  let diff
   /** @type {number} */
-  var end
+  let end
 
   if (options.position) {
     if ('start' in options.position || 'indent' in options.position) {
@@ -432,7 +432,7 @@ export function parseEntities(value, options = {}) {
    */
   function warning(code, offset) {
     /** @type {Point} */
-    var position
+    let position
 
     if (options.warning) {
       position = now()

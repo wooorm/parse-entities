@@ -1,6 +1,6 @@
 import {characterEntities} from 'character-entities'
 
-var own = {}.hasOwnProperty
+const own = {}.hasOwnProperty
 
 /**
  * @param {string} characters

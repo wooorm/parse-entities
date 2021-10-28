@@ -1,21 +1,19 @@
 /* eslint-env browser */
 
-var semicolon = 59 // `;`
+const semicolon = 59 // `;`
 /** @type {HTMLElement} */
-var element
+let element
 
 /**
  * @param {string} characters
  * @returns {string|false}
  */
 export function decodeEntity(characters) {
-  var entity = '&' + characters + ';'
-  /** @type {string} */
-  var char
+  const entity = '&' + characters + ';'
 
   element = element || document.createElement('i')
   element.innerHTML = entity
-  char = element.textContent
+  const char = element.textContent
 
   // Some entities do not require the closing semicolon (`&not` - for instance),
   // which leads to situations where parsing the assumed entity of `&notit;`

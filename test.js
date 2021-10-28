@@ -570,7 +570,7 @@ test('parseEntities(value)', function (t) {
    * @param {Partial<import('./index.js').ParseEntitiesOptions<WarningContext, ReferenceContext, TextContext>>} [options={}]
    */
   function assert(fixture, options = {}) {
-    var result = {
+    const result = {
       result: '',
       /** @type {Array.<[string, import('./index.js').Position, string]>} */
       reference: [],
