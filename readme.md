@@ -14,10 +14,8 @@ Parse HTML character references.
 *   [Install](#install)
 *   [Use](#use)
 *   [API](#api)
-*   [`parseEntities(value[, options])`](#parseentitiesvalue-options)
-    *   [`function warning(reason, point, code)`](#function-warningreason-point-code)
-    *   [`function text(value, position)`](#function-textvalue-position)
-    *   [`function reference(value, position, source)`](#function-referencevalue-position-source)
+    *   [`parseEntities(value[, options])`](#parseentitiesvalue-options)
+    *   [`decodeEntity(value)`](#decodeentityvalue)
 *   [Types](#types)
 *   [Compatibility](#compatibility)
 *   [Security](#security)
@@ -80,7 +78,7 @@ console.log(parseEntities('echo &copy; foxtrot &#8800; golf &#x1D306; hotel'))
 This package exports the following identifiers: `parseEntities`, `decodeEntity`.
 There is no default export.
 
-## `parseEntities(value[, options])`
+### `parseEntities(value[, options])`
 
 Parse HTML character references.
 
@@ -142,7 +140,7 @@ Context used when calling `reference` (`'*'`, optional)
 
 `string` — decoded `value`.
 
-### `function warning(reason, point, code)`
+#### `function warning(reason, point, code)`
 
 Error handler.
 
@@ -165,7 +163,7 @@ The following codes are used:
 | `6`  | `Foo &#128; baz`   | [Disallowed reference][invalid]               |
 | `7`  | `Foo &#xD800; baz` | Prohibited: outside permissible unicode range |
 
-### `function text(value, position)`
+#### `function text(value, position)`
 
 Text handler.
 
@@ -175,7 +173,7 @@ Text handler.
 *   `value` (`string`) — string of content
 *   `position` ([`Position`][position]) — place where `value` starts and ends
 
-### `function reference(value, position, source)`
+#### `function reference(value, position, source)`
 
 Character reference handler.
 
@@ -185,6 +183,21 @@ Character reference handler.
 *   `value` (`string`) — decoded character reference
 *   `position` ([`Position`][position]) — place where `source` starts and ends
 *   `source` (`string`) — raw source of character reference
+
+### `decodeEntity(value)`
+
+Decode a single character reference (without the `&` or `;`).
+You probably only need this when you’re building parsers yourself that follow
+different rules compared to HTML.
+This is optimized to be tiny in browsers.
+
+###### Parameters
+
+*   `value` (`string`) — `notin` (named), `#123` (deci), `#x123` (hexa)
+
+###### Returns
+
+`string` or `false` — decoded reference
 
 ## Types
 
