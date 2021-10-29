@@ -24,22 +24,22 @@
   "sideEffects": false,
   "type": "module",
   "main": "index.js",
-  "types": "types/index.d.ts",
+  "types": "index.d.ts",
   "browser": {
-    "./decode-entity.js": "./decode-entity.browser.js"
+    "./lib/decode-entity.js": "./lib/decode-entity.browser.js"
   },
   "react-native": {
-    "./decode-entity.js": "./decode-entity.js"
+    "./lib/decode-entity.js": "./lib/decode-entity.js"
   },
   "files": [
-    "index.js",
-    "index.d.ts",
+    "lib/",
     "decode-entity.js",
     "decode-entity.d.ts",
-    "decode-entity.browser.js",
-    "decode-entity.browser.d.ts"
+    "index.js",
+    "index.d.ts"
   ],
   "dependencies": {
+    "@types/unist": "^2.0.6",
     "character-entities": "^2.0.0",
     "character-entities-legacy": "^2.0.0",
     "character-reference-invalid": "^2.0.0",
@@ -60,11 +60,11 @@
     "xo": "^0.45.0"
   },
   "scripts": {
-    "prepack": "npm run build && npm run format",
-    "build": "rimraf \"*.d.ts\" && tsc && type-coverage",
+    "prepublishOnly": "npm run build && npm run format",
+    "build": "rimraf \"lib/**/*.d.ts\" \"{decode-entity,test}.d.ts\" && tsc && type-coverage",
     "format": "remark . -qfo && prettier . -w --loglevel warn && xo --fix",
-    "test-api": "node test.js",
-    "test-coverage": "c8 --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 --reporter lcov node test.js",
+    "test-api": "node --conditions development test.js",
+    "test-coverage": "c8 --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 --reporter lcov npm run test-api",
     "test": "npm run build && npm run format && npm run test-coverage"
   },
   "prettier": {
@@ -92,6 +92,7 @@
   "typeCoverage": {
     "atLeast": 100,
     "detail": true,
-    "strict": true
+    "strict": true,
+    "ignoreCatch": true
   }
 }

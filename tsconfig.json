@@ -1,9 +1,8 @@
 {
-  "files": ["index.js", "decode-entity.js", "decode-entity.browser.js"],
-  "include": ["*.js"],
+  "include": ["lib/**/*.js", "decode-entity.js", "test.js"],
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["ES2020", "dom"],
+    "lib": ["ES2020"],
     "module": "ES2020",
     "moduleResolution": "node",
     "allowJs": true,
@@ -11,6 +10,7 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": true
   }
 }

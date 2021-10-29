@@ -563,20 +563,17 @@ test('parseEntities(value)', function (t) {
   t.end()
 
   /**
-   * @template {typeof globalThis} WarningContext
-   * @template {typeof globalThis} ReferenceContext
-   * @template {typeof globalThis} TextContext
    * @param {string} fixture
-   * @param {Partial<import('./index.js').ParseEntitiesOptions<WarningContext, ReferenceContext, TextContext>>} [options={}]
+   * @param {import('./index.js').Options} [options={}]
    */
   function assert(fixture, options = {}) {
     const result = {
       result: '',
-      /** @type {Array.<[string, import('./index.js').Position, string]>} */
+      /** @type {Array.<[string, import('unist').Position, string]>} */
       reference: [],
-      /** @type {Array.<[string, import('./index.js').Position]>} */
+      /** @type {Array.<[string, import('unist').Position]>} */
       text: [],
-      /** @type {Array.<[string, import('./index.js').Point, number]>} */
+      /** @type {Array.<[string, import('unist').Point, number]>} */
       warning: []
     }
 
