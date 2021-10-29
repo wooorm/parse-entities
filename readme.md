@@ -9,6 +9,8 @@ Parse HTML character references.
 
 ## Contents
 
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
 *   [Install](#install)
 *   [Use](#use)
 *   [API](#api)
@@ -22,6 +24,18 @@ Parse HTML character references.
 *   [Related](#related)
 *   [Contribute](#contribute)
 *   [License](#license)
+
+## What is this?
+
+This is a small and powerful decoder of HTML character references (often called
+entities).
+
+## When should I use this?
+
+You can use this for spec-compliant decoding of character references.
+It’s small and fast enough to do that well.
+You can also use this when making a linter, because there are different warnings
+emitted with reasons for why and positional info on where they happened.
 
 ## Install
 
@@ -193,11 +207,11 @@ This package is safe: it matches the HTML spec to parse character references.
 *   [`wooorm/stringify-entities`](https://github.com/wooorm/stringify-entities)
     — encode HTML character references
 *   [`wooorm/character-entities`](https://github.com/wooorm/character-entities)
-    — info on character entities
+    — info on character references
 *   [`wooorm/character-entities-html4`](https://github.com/wooorm/character-entities-html4)
-    — info on HTML4 character entities
+    — info on HTML4 character references
 *   [`wooorm/character-entities-legacy`](https://github.com/wooorm/character-entities-legacy)
-    — info on legacy character entities
+    — info on legacy character references
 *   [`wooorm/character-reference-invalid`](https://github.com/wooorm/character-reference-invalid)
     — info on invalid numeric character references
 
