@@ -39,9 +39,9 @@
     "index.d.ts"
   ],
   "dependencies": {
-    "@types/unist": "^2.0.6",
+    "@types/unist": "^2.0.0",
     "character-entities": "^2.0.0",
-    "character-entities-legacy": "^2.0.0",
+    "character-entities-legacy": "^3.0.0",
     "character-reference-invalid": "^2.0.0",
     "is-alphanumerical": "^2.0.0",
     "is-decimal": "^2.0.0",
