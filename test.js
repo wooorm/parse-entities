@@ -64,7 +64,7 @@ test('parseEntities(value)', function (t) {
       text: [[' bar', position(1, 6, 5, 1, 10, 9)]],
       warning: []
     },
-    'should work when the entity is initial'
+    'should work when the reference is initial'
   )
 
   t.deepEqual(
@@ -75,7 +75,7 @@ test('parseEntities(value)', function (t) {
       text: [['foo ', position(1, 1, 0, 1, 5, 4)]],
       warning: []
     },
-    'should work when the entity is final'
+    'should work when the reference is final'
   )
 
   t.deepEqual(
@@ -206,7 +206,7 @@ test('parseEntities(value)', function (t) {
       reference: [],
       text: [['Foo &&bar', position(1, 1, 0, 1, 10, 9)]],
       // The warning here is for the following ampersand, followed by `bar`,
-      // which is not an entity.
+      // which is not a reference.
       warning: [
         ['Named character references cannot be empty', point(1, 7, 6), 3]
       ]
@@ -544,7 +544,7 @@ test('parseEntities(value)', function (t) {
         ]
       ]
     },
-    'legacy entity characters'
+    'legacy reference characters'
   )
 
   t.deepEqual(
@@ -557,7 +557,7 @@ test('parseEntities(value)', function (t) {
         ['Named character references cannot be empty', point(1, 6, 5), 3]
       ]
     },
-    'non-legacy entity characters'
+    'non-legacy reference characters'
   )
 
   t.end()

@@ -5,17 +5,45 @@
 [![Downloads][downloads-badge]][downloads]
 [![Size][size-badge]][size]
 
-Parse HTML character references: fast, spec-compliant, positional information.
+Parse HTML character references.
+
+## Contents
+
+*   [Install](#install)
+*   [Use](#use)
+*   [API](#api)
+*   [`parseEntities(value[, options])`](#parseentitiesvalue-options)
+    *   [`function warning(reason, point, code)`](#function-warningreason-point-code)
+    *   [`function text(value, position)`](#function-textvalue-position)
+    *   [`function reference(value, position, source)`](#function-referencevalue-position-source)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
+*   [Security](#security)
+*   [Related](#related)
+*   [Contribute](#contribute)
+*   [License](#license)
 
 ## Install
 
-This package is ESM only: Node 12+ is needed to use it and it must be `import`ed
-instead of `require`d.
-
-[npm][]:
+This package is [ESM only][esm].
+In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
 
 ```sh
 npm install parse-entities
+```
+
+In Deno with [Skypack][]:
+
+```js
+import {parseEntities} from 'https://cdn.skypack.dev/parse-entities@3?dts'
+```
+
+In browsers with [Skypack][]:
+
+```html
+<script type="module">
+  import {parseEntities} from 'https://cdn.skypack.dev/parse-entities@3?min'
+</script>
 ```
 
 ## Use
@@ -23,22 +51,28 @@ npm install parse-entities
 ```js
 import {parseEntities} from 'parse-entities'
 
-parseEntities('alpha &amp bravo')
+console.log(parseEntities('alpha &amp bravo')))
 // => alpha & bravo
 
-parseEntities('charlie &copycat; delta')
+console.log(parseEntities('charlie &copycat; delta'))
 // => charlie ©cat; delta
 
-parseEntities('echo &copy; foxtrot &#8800; golf &#x1D306; hotel')
+console.log(parseEntities('echo &copy; foxtrot &#8800; golf &#x1D306; hotel'))
 // => echo © foxtrot ≠ golf 𝌆 hotel
 ```
 
 ## API
 
-This package exports the following identifiers: `parseEntities`.
+This package exports the following identifiers: `parseEntities`, `decodeEntity`.
 There is no default export.
 
 ## `parseEntities(value[, options])`
+
+Parse HTML character references.
+
+##### `options`
+
+Configuration (optional).
 
 ###### `options.additional`
 
@@ -48,12 +82,23 @@ This allows other characters, without error, when following an ampersand.
 ###### `options.attribute`
 
 Whether to parse `value` as an attribute value (`boolean?`, default: `false`).
+This results in slightly different behavior.
 
 ###### `options.nonTerminated`
 
-Whether to allow non-terminated entities (`boolean`, default: `true`).
+Whether to allow nonterminated references (`boolean`, default: `true`).
 For example, `&copycat` for `©cat`.
-This behavior is spec-compliant but can lead to unexpected results.
+This behavior is compliant to the spec but can lead to unexpected results.
+
+###### `options.position`
+
+Starting `position` of `value` (`Position` or `Point`, optional).
+Useful when dealing with values nested in some sort of syntax tree.
+The default is:
+
+```js
+{line: 1, column: 1, offset: 0}
+```
 
 ###### `options.warning`
 
@@ -69,51 +114,30 @@ Reference handler ([`Function?`][reference]).
 
 ###### `options.warningContext`
 
-Context used when invoking `warning` (`'*'`, optional).
+Context used when calling `warning` (`'*'`, optional).
 
 ###### `options.textContext`
 
-Context used when invoking `text` (`'*'`, optional).
+Context used when calling `text` (`'*'`, optional).
 
 ###### `options.referenceContext`
 
-Context used when invoking `reference` (`'*'`, optional)
-
-###### `options.position`
-
-Starting `position` of `value` (`Position` or `Point`, optional).
-Useful when dealing with values nested in some sort of syntax tree.
-The default is:
-
-```js
-{line: 1, column: 1, offset: 0}
-```
+Context used when calling `reference` (`'*'`, optional)
 
 ##### Returns
 
-`string` — Decoded `value`.
+`string` — decoded `value`.
 
 ### `function warning(reason, point, code)`
 
 Error handler.
 
-##### Context
+###### Parameters
 
-`this` refers to `warningContext` when given to `parseEntities`.
-
-##### Parameters
-
-###### `reason`
-
-Human-readable reason the error (`string`).
-
-###### `point`
-
-Place at which the parse error occurred (`Point`).
-
-###### `code`
-
-Machine-readable code for the error (`number`).
+*   `this` (`*`) — refers to `warningContext` when given to `parseEntities`
+*   `reason` (`string`) — human readable reason for emitting a parse error
+*   `point` ([`Point`][point]) — place where the error occurred
+*   `code` (`number`) — machine readable code the error
 
 The following codes are used:
 
@@ -121,9 +145,9 @@ The following codes are used:
 | ---- | ------------------ | --------------------------------------------- |
 | `1`  | `foo &amp bar`     | Missing semicolon (named)                     |
 | `2`  | `foo &#123 bar`    | Missing semicolon (numeric)                   |
-| `3`  | `Foo &bar baz`     | Ampersand did not start a reference           |
-| `4`  | `Foo &#`           | Empty reference                               |
-| `5`  | `Foo &bar; baz`    | Unknown entity                                |
+| `3`  | `Foo &bar baz`     | Empty (named)                                 |
+| `4`  | `Foo &#`           | Empty (numeric)                               |
+| `5`  | `Foo &bar; baz`    | Unknown (named)                               |
 | `6`  | `Foo &#128; baz`   | [Disallowed reference][invalid]               |
 | `7`  | `Foo &#xD800; baz` | Prohibited: outside permissible unicode range |
 
@@ -131,54 +155,56 @@ The following codes are used:
 
 Text handler.
 
-##### Context
+###### Parameters
 
-`this` refers to `textContext` when given to `parseEntities`.
-
-##### Parameters
-
-###### `value`
-
-String of content (`string`).
-
-###### `position`
-
-Location at which `value` starts and ends (`Position`).
+*   `this` (`*`) — refers to `textContext` when given to `parseEntities`
+*   `value` (`string`) — string of content
+*   `position` ([`Position`][position]) — place where `value` starts and ends
 
 ### `function reference(value, position, source)`
 
 Character reference handler.
 
-##### Context
+###### Parameters
 
-`this` refers to `referenceContext` when given to `parseEntities`.
+*   `this` (`*`) — refers to `referenceContext` when given to `parseEntities`
+*   `value` (`string`) — decoded character reference
+*   `position` ([`Position`][position]) — place where `source` starts and ends
+*   `source` (`string`) — raw source of character reference
 
-##### Parameters
+## Types
 
-###### `value`
+This package is fully typed with [TypeScript][].
+Additional `Options`, `WarningHandler`, `ReferenceHandler`, and `TextHandler`
+types are exported that model their respective values.
 
-Encoded character reference (`string`).
+## Compatibility
 
-###### `position`
+This package is at least compatible with all maintained versions of Node.js.
+As of now, that is Node.js 12.20+, 14.14+, and 16.0+.
+It also works in Deno and modern browsers.
 
-Location at which `value` starts and ends (`Position`).
+## Security
 
-###### `source`
-
-Source of character reference (`string`).
+This package is safe: it matches the HTML spec to parse character references.
 
 ## Related
 
-*   [`stringify-entities`](https://github.com/wooorm/stringify-entities)
-    — Encode HTML character references
-*   [`character-entities`](https://github.com/wooorm/character-entities)
-    — Info on character entities
-*   [`character-entities-html4`](https://github.com/wooorm/character-entities-html4)
-    — Info on HTML4 character entities
-*   [`character-entities-legacy`](https://github.com/wooorm/character-entities-legacy)
-    — Info on legacy character entities
-*   [`character-reference-invalid`](https://github.com/wooorm/character-reference-invalid)
-    — Info on invalid numeric character references
+*   [`wooorm/stringify-entities`](https://github.com/wooorm/stringify-entities)
+    — encode HTML character references
+*   [`wooorm/character-entities`](https://github.com/wooorm/character-entities)
+    — info on character entities
+*   [`wooorm/character-entities-html4`](https://github.com/wooorm/character-entities-html4)
+    — info on HTML4 character entities
+*   [`wooorm/character-entities-legacy`](https://github.com/wooorm/character-entities-legacy)
+    — info on legacy character entities
+*   [`wooorm/character-reference-invalid`](https://github.com/wooorm/character-reference-invalid)
+    — info on invalid numeric character references
+
+## Contribute
+
+Yes please!
+See [How to Contribute to Open Source][contribute].
 
 ## License
 
@@ -204,9 +230,15 @@ Source of character reference (`string`).
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[skypack]: https://www.skypack.dev
+
 [license]: license
 
 [author]: https://wooorm.com
+
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
+[typescript]: https://www.typescriptlang.org
 
 [warning]: #function-warningreason-point-code
 
@@ -215,3 +247,9 @@ Source of character reference (`string`).
 [reference]: #function-referencevalue-position-source
 
 [invalid]: https://github.com/wooorm/character-reference-invalid
+
+[point]: https://github.com/syntax-tree/unist#point
+
+[position]: https://github.com/syntax-tree/unist#position
+
+[contribute]: https://opensource.guide/how-to-contribute/

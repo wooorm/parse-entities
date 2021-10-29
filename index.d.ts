@@ -6,11 +6,11 @@ import type {Point, Position} from 'unist'
  * @this
  *   The `warningContext` given to `parseEntities`
  * @param reason
- *   Human-readable reason for triggering a parse error.
+ *   Human readable reason for emitting a parse error.
  * @param point
- *   Place at which the parse error occurred.
+ *   Place where the error occurred.
  * @param code
- *   Identifier of reason for triggering a parse error.
+ *   Machine readable code the error.
  */
 export type WarningHandler<Context = undefined> = (
   this: Context,
@@ -25,11 +25,11 @@ export type WarningHandler<Context = undefined> = (
  * @this
  *   The `referenceContext` given to `parseEntities`
  * @param value
- *   String of content.
+ *   Decoded character reference.
  * @param position
- *   Place at which `value` starts and ends.
+ *   Place where `value` starts and ends.
  * @param source
- *   Source of character reference.
+ *   Raw source of character reference.
  */
 export type ReferenceHandler<Context = undefined> = (
   this: Context,
@@ -42,11 +42,11 @@ export type ReferenceHandler<Context = undefined> = (
  * @typeParam Context
  *   Value used as `this`.
  * @this
- *   The `textContext` given to `parseEntities`
+ *   The `textContext` given to `parseEntities`.
  * @param value
  *   String of content.
- * @param point
- *   Place at which `value` starts and ends.
+ * @param position
+ *   Place where `value` starts and ends.
  */
 export type TextHandler<Context = undefined> = (
   this: Context,
@@ -70,19 +70,23 @@ export type Options<
   TextContext = undefined
 > = {
   /**
-   * Additional character to accept. This allows other characters, without error, when following an ampersand.
+   * Additional character to accept.
+   * This allows other characters, without error, when following an ampersand.
    *
    * @default ''
    */
   additional?: string
   /**
    * Whether to parse `value` as an attribute value.
+   * This results in slightly different behavior.
    *
    * @default false
    */
   attribute?: boolean
   /**
-   * Whether to allow non-terminated entities. For example, `&copycat` for `©cat`. This behaviour is spec-compliant but can lead to unexpected results
+   * Whether to allow nonterminated character references.
+   * For example, `&copycat` for `©cat`.
+   * This behavior is compliant to the spec but can lead to unexpected results.
    *
    * @default true
    */
