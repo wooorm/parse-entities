@@ -15,7 +15,6 @@ Parse HTML character references.
 *   [Use](#use)
 *   [API](#api)
     *   [`parseEntities(value[, options])`](#parseentitiesvalue-options)
-    *   [`decodeEntity(value)`](#decodeentityvalue)
 *   [Types](#types)
 *   [Compatibility](#compatibility)
 *   [Security](#security)
@@ -75,7 +74,7 @@ console.log(parseEntities('echo &copy; foxtrot &#8800; golf &#x1D306; hotel'))
 
 ## API
 
-This package exports the following identifiers: `parseEntities`, `decodeEntity`.
+This package exports the following identifier: `parseEntities`.
 There is no default export.
 
 ### `parseEntities(value[, options])`
@@ -183,21 +182,6 @@ Character reference handler.
 *   `value` (`string`) — decoded character reference
 *   `position` ([`Position`][position]) — place where `source` starts and ends
 *   `source` (`string`) — raw source of character reference
-
-### `decodeEntity(value)`
-
-Decode a single character reference (without the `&` or `;`).
-You probably only need this when you’re building parsers yourself that follow
-different rules compared to HTML.
-This is optimized to be tiny in browsers.
-
-###### Parameters
-
-*   `value` (`string`) — `notin` (named), `#123` (deci), `#x123` (hexa)
-
-###### Returns
-
-`string` or `false` — decoded reference
 
 ## Types
 

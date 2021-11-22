@@ -25,16 +25,8 @@
   "type": "module",
   "main": "index.js",
   "types": "index.d.ts",
-  "browser": {
-    "./lib/decode-entity.js": "./lib/decode-entity.browser.js"
-  },
-  "react-native": {
-    "./lib/decode-entity.js": "./lib/decode-entity.js"
-  },
   "files": [
     "lib/",
-    "decode-entity.js",
-    "decode-entity.d.ts",
     "index.js",
     "index.d.ts"
   ],
@@ -43,6 +35,7 @@
     "character-entities": "^2.0.0",
     "character-entities-legacy": "^3.0.0",
     "character-reference-invalid": "^2.0.0",
+    "decode-named-character-reference": "^1.0.0",
     "is-alphanumerical": "^2.0.0",
     "is-decimal": "^2.0.0",
     "is-hexadecimal": "^2.0.0"
