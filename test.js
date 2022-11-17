@@ -584,7 +584,7 @@ test('parseEntities(value)', function (t) {
     function addFactory(type) {
       return add
       /**
-       * @param {unknown[]} things
+       * @param {Array<unknown>} things
        */
       function add(...things) {
         // @ts-ignore
