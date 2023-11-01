@@ -475,6 +475,7 @@ test('parseEntities(value)', function () {
       position: {
         start: point(3, 5, 12),
         end: point(4, 9, 32),
+        // To do: remove support next major.
         indent: [5]
       }
     }),
