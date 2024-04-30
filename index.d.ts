@@ -1,5 +1,7 @@
 import type {Point, Position} from 'unist'
 
+// To do: next major: remove `void` from allowed return types.
+
 /**
  * @typeParam Context
  *   Value used as `this`.
@@ -17,7 +19,7 @@ export type WarningHandler<Context = undefined> = (
   reason: string,
   point: Point,
   code: number
-) => void
+) => undefined | void
 
 /**
  * @typeParam Context
@@ -36,7 +38,7 @@ export type ReferenceHandler<Context = undefined> = (
   value: string,
   position: Position,
   source: string
-) => void
+) => undefined | void
 
 /**
  * @typeParam Context
@@ -52,7 +54,7 @@ export type TextHandler<Context = undefined> = (
   this: Context,
   value: string,
   position: Position
-) => void
+) => undefined | void
 
 /**
  * Configuration.
@@ -64,25 +66,25 @@ export type TextHandler<Context = undefined> = (
  * @typeParam TextContext
  *   Value used as `this` in the `text` handler.
  */
-export type Options<
+export interface Options<
   WarningContext = undefined,
   ReferenceContext = undefined,
   TextContext = undefined
-> = {
+> {
   /**
    * Additional character to accept.
    * This allows other characters, without error, when following an ampersand.
    *
    * @default ''
    */
-  additional?: string
+  additional?: string | null | undefined
   /**
    * Whether to parse `value` as an attribute value.
    * This results in slightly different behavior.
    *
    * @default false
    */
-  attribute?: boolean
+  attribute?: boolean | null | undefined
   /**
    * Whether to allow nonterminated character references.
    * For example, `&copycat` for `©cat`.
@@ -90,35 +92,35 @@ export type Options<
    *
    * @default true
    */
-  nonTerminated?: boolean
+  nonTerminated?: boolean | null | undefined
   /**
    * Starting `position` of `value` (`Point` or `Position`). Useful when dealing with values nested in some sort of syntax tree.
    */
-  position?: Position | Point
+  position?: Readonly<Position> | Readonly<Point> | null | undefined
   /**
    * Context used when calling `warning`.
    */
-  warningContext?: WarningContext
+  warningContext?: WarningContext | null | undefined
   /**
    * Context used when calling `reference`.
    */
-  referenceContext?: ReferenceContext
+  referenceContext?: ReferenceContext | null | undefined
   /**
    * Context used when calling `text`.
    */
-  textContext?: TextContext
+  textContext?: TextContext | null | undefined
   /**
    * Warning handler.
    */
-  warning?: WarningHandler<WarningContext>
+  warning?: WarningHandler<WarningContext> | null | undefined
   /**
    * Reference handler.
    */
-  reference?: ReferenceHandler<ReferenceContext>
+  reference?: ReferenceHandler<ReferenceContext> | null | undefined
   /**
    * Text handler.
    */
-  text?: TextHandler<TextContext>
+  text?: TextHandler<TextContext> | null | undefined
 }
 
 export {parseEntities} from './lib/index.js'

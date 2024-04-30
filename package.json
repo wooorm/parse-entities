@@ -69,6 +69,8 @@
   "xo": {
     "prettier": true,
     "rules": {
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/ban-types": "off",
       "complexity": "off",
       "max-depth": "off",
       "no-bitwise": "off",
@@ -78,7 +80,7 @@
   },
   "remarkConfig": {
     "plugins": [
-      "preset-wooorm"
+      "remark-preset-wooorm"
     ]
   },
   "typeCoverage": {
