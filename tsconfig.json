@@ -1,9 +1,8 @@
 {
-  "include": ["**/**.js", "index.d.ts"],
-  "exclude": ["coverage", "node_modules"],
   "compilerOptions": {
     "checkJs": true,
     "declaration": true,
+    "declarationMap": true,
     "emitDeclarationOnly": true,
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,5 +11,7 @@
     "newLine": "lf",
     "strict": true,
     "target": "es2020"
-  }
+  },
+  "exclude": ["coverage", "node_modules"],
+  "include": ["**/**.js", "index.d.ts"]
 }
