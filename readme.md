@@ -9,18 +9,18 @@ Parse HTML character references.
 
 ## Contents
 
-*   [What is this?](#what-is-this)
-*   [When should I use this?](#when-should-i-use-this)
-*   [Install](#install)
-*   [Use](#use)
-*   [API](#api)
-    *   [`parseEntities(value[, options])`](#parseentitiesvalue-options)
-*   [Types](#types)
-*   [Compatibility](#compatibility)
-*   [Security](#security)
-*   [Related](#related)
-*   [Contribute](#contribute)
-*   [License](#license)
+* [What is this?](#what-is-this)
+* [When should I use this?](#when-should-i-use-this)
+* [Install](#install)
+* [Use](#use)
+* [API](#api)
+  * [`parseEntities(value[, options])`](#parseentitiesvalue-options)
+* [Types](#types)
+* [Compatibility](#compatibility)
+* [Security](#security)
+* [Related](#related)
+* [Contribute](#contribute)
+* [License](#license)
 
 ## What is this?
 
@@ -145,10 +145,10 @@ Error handler.
 
 ###### Parameters
 
-*   `this` (`*`) — refers to `warningContext` when given to `parseEntities`
-*   `reason` (`string`) — human readable reason for emitting a parse error
-*   `point` ([`Point`][point]) — place where the error occurred
-*   `code` (`number`) — machine readable code the error
+* `this` (`*`) — refers to `warningContext` when given to `parseEntities`
+* `reason` (`string`) — human readable reason for emitting a parse error
+* `point` ([`Point`][point]) — place where the error occurred
+* `code` (`number`) — machine readable code the error
 
 The following codes are used:
 
@@ -168,9 +168,9 @@ Text handler.
 
 ###### Parameters
 
-*   `this` (`*`) — refers to `textContext` when given to `parseEntities`
-*   `value` (`string`) — string of content
-*   `position` ([`Position`][position]) — place where `value` starts and ends
+* `this` (`*`) — refers to `textContext` when given to `parseEntities`
+* `value` (`string`) — string of content
+* `position` ([`Position`][position]) — place where `value` starts and ends
 
 #### `function reference(value, position, source)`
 
@@ -178,10 +178,10 @@ Character reference handler.
 
 ###### Parameters
 
-*   `this` (`*`) — refers to `referenceContext` when given to `parseEntities`
-*   `value` (`string`) — decoded character reference
-*   `position` ([`Position`][position]) — place where `source` starts and ends
-*   `source` (`string`) — raw source of character reference
+* `this` (`*`) — refers to `referenceContext` when given to `parseEntities`
+* `value` (`string`) — decoded character reference
+* `position` ([`Position`][position]) — place where `source` starts and ends
+* `source` (`string`) — raw source of character reference
 
 ## Types
 
@@ -201,16 +201,16 @@ This package is safe: it matches the HTML spec to parse character references.
 
 ## Related
 
-*   [`wooorm/stringify-entities`](https://github.com/wooorm/stringify-entities)
-    — encode HTML character references
-*   [`wooorm/character-entities`](https://github.com/wooorm/character-entities)
-    — info on character references
-*   [`wooorm/character-entities-html4`](https://github.com/wooorm/character-entities-html4)
-    — info on HTML4 character references
-*   [`wooorm/character-entities-legacy`](https://github.com/wooorm/character-entities-legacy)
-    — info on legacy character references
-*   [`wooorm/character-reference-invalid`](https://github.com/wooorm/character-reference-invalid)
-    — info on invalid numeric character references
+* [`wooorm/stringify-entities`](https://github.com/wooorm/stringify-entities)
+  — encode HTML character references
+* [`wooorm/character-entities`](https://github.com/wooorm/character-entities)
+  — info on character references
+* [`wooorm/character-entities-html4`](https://github.com/wooorm/character-entities-html4)
+  — info on HTML4 character references
+* [`wooorm/character-entities-legacy`](https://github.com/wooorm/character-entities-legacy)
+  — info on legacy character references
+* [`wooorm/character-reference-invalid`](https://github.com/wooorm/character-reference-invalid)
+  — info on invalid numeric character references
 
 ## Contribute
 
