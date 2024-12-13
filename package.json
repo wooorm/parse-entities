@@ -32,7 +32,6 @@
   ],
   "dependencies": {
     "@types/unist": "^2.0.0",
-    "character-entities": "^2.0.0",
     "character-entities-legacy": "^3.0.0",
     "character-reference-invalid": "^2.0.0",
     "decode-named-character-reference": "^1.0.0",
