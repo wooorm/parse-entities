@@ -1,3 +1,8 @@
+/**
+ * @import {Point, Position} from 'unist'
+ * @import {Options} from './index.js'
+ */
+
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {parseEntities} from './index.js'
@@ -564,16 +569,16 @@ test('parseEntities(value)', function () {
 
   /**
    * @param {string} fixture
-   * @param {import('./index.js').Options} [options={}]
+   * @param {Options} [options={}]
    */
   function check(fixture, options = {}) {
     const result = {
       result: '',
-      /** @type {Array.<[string, import('unist').Position, string]>} */
+      /** @type {Array.<[string, Position, string]>} */
       reference: [],
-      /** @type {Array.<[string, import('unist').Position]>} */
+      /** @type {Array.<[string, Position]>} */
       text: [],
-      /** @type {Array.<[string, import('unist').Point, number]>} */
+      /** @type {Array.<[string, Point, number]>} */
       warning: []
     }
 
