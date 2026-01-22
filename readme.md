@@ -1,9 +1,9 @@
 # parse-entities
 
-[![Build][build-badge]][build]
-[![Coverage][coverage-badge]][coverage]
-[![Downloads][downloads-badge]][downloads]
-[![Size][size-badge]][size]
+[![Build][badge-build-image]][badge-build-url]
+[![Coverage][badge-coverage-image]][badge-coverage-url]
+[![Downloads][badge-downloads-image]][badge-downloads-url]
+[![Size][badge-size-image]][badge-size-url]
 
 Parse HTML character references.
 
@@ -14,8 +14,8 @@ Parse HTML character references.
 * [Install](#install)
 * [Use](#use)
 * [API](#api)
+* [`Options`](#options)
   * [`parseEntities(value[, options])`](#parseentitiesvalue-options)
-* [Types](#types)
 * [Compatibility](#compatibility)
 * [Security](#security)
 * [Related](#related)
@@ -36,8 +36,9 @@ emitted with reasons for why and positional info on where they happened.
 
 ## Install
 
-This package is [ESM only][esm].
-In Node.js (version 14.14+, 16.0+), install with [npm][]:
+This package is [ESM only][github-gist-esm].
+In Node.js (version 16+),
+install with [npm][npmjs-install]:
 
 ```sh
 npm install parse-entities
@@ -74,25 +75,29 @@ console.log(parseEntities('echo &copy; foxtrot &#8800; golf &#x1D306; hotel'))
 
 ## API
 
-This package exports the identifier `parseEntities`.
+This package exports the identifier
+[`parseEntities`][api-parse-entities].
+It also exports the [TypeScript][] types
+[`Options`][api-options],
+[`ReferenceHandler`][api-reference-handler],
+[`TextHandler`][api-text-handler], and
+[`WarningHandler`][api-warning-handler].
 There is no default export.
 
-### `parseEntities(value[, options])`
+## `Options`
 
-Parse HTML character references.
+Configuration (TypeScript type).
 
-##### `options`
-
-Configuration (optional).
+##### Fields
 
 ###### `options.additional`
 
-Additional character to accept (`string?`, default: `''`).
+Additional character to accept (`string`, default: `''`).
 This allows other characters, without error, when following an ampersand.
 
 ###### `options.attribute`
 
-Whether to parse `value` as an attribute value (`boolean?`, default: `false`).
+Whether to parse `value` as an attribute value (`boolean`, default: `false`).
 This results in slightly different behavior.
 
 ###### `options.nonTerminated`
@@ -103,7 +108,7 @@ This behavior is compliant to the spec but can lead to unexpected results.
 
 ###### `options.position`
 
-Starting `position` of `value` (`Position` or `Point`, optional).
+Starting `position` of `value` (`Point` or `Position`, optional).
 Useful when dealing with values nested in some sort of syntax tree.
 The default is:
 
@@ -111,44 +116,87 @@ The default is:
 {line: 1, column: 1, offset: 0}
 ```
 
-###### `options.warning`
+###### `options.referenceContext`
 
-Error handler ([`Function?`][warning]).
-
-###### `options.text`
-
-Text handler ([`Function?`][text]).
+Context used when calling `reference` (`unknown`, optional)
 
 ###### `options.reference`
 
-Reference handler ([`Function?`][reference]).
-
-###### `options.warningContext`
-
-Context used when calling `warning` (`'*'`, optional).
+Reference handler ([`ReferenceHandler`][api-reference-handler], optional).
 
 ###### `options.textContext`
 
-Context used when calling `text` (`'*'`, optional).
+Context used when calling `text` (`unknown`, optional).
 
-###### `options.referenceContext`
+###### `options.text`
 
-Context used when calling `reference` (`'*'`, optional)
+Text handler ([`TextHandler`][api-text-handler], optional).
+
+###### `options.warningContext`
+
+Context used when calling `warning` (`unknown`, optional).
+
+###### `options.warning`
+
+Error handler ([`WarningHandler`][api-warning-handler], optional).
+
+### `parseEntities(value[, options])`
+
+Parse HTML character references.
+
+###### Parameters
+
+* `value` (`string`)
+  — value to decode
+* `options` ([`Options`][api-options], optional)
+  — configuration
 
 ##### Returns
 
-`string` — decoded `value`.
+Decoded `value` (`string`).
 
-#### `function warning(reason, point, code)`
+#### `ReferenceHandler`
+
+Character reference handler.
+
+###### Parameters
+
+* `this` (`*`)
+  — refers to `referenceContext` when given to `parseEntities`
+* `value` (`string`)
+  — decoded character reference
+* `position` ([`Position`][github-unist-position])
+  — place where `source` starts and ends
+* `source` (`string`)
+  — raw source of character reference
+
+#### `TextHandler`
+
+Text handler.
+
+###### Parameters
+
+* `this` (`*`)
+  — refers to `textContext` when given to `parseEntities`
+* `value` (`string`)
+  — string of content
+* `position` ([`Position`][github-unist-position])
+  — place where `value` starts and ends
+
+#### `WarningHandler`
 
 Error handler.
 
 ###### Parameters
 
-* `this` (`*`) — refers to `warningContext` when given to `parseEntities`
-* `reason` (`string`) — human readable reason for emitting a parse error
-* `point` ([`Point`][point]) — place where the error occurred
-* `code` (`number`) — machine readable code the error
+* `this` (`*`)
+  — refers to `warningContext` when given to `parseEntities`
+* `reason` (`string`)
+  — human readable reason for emitting a parse error
+* `point` ([`Point`][github-unist-point])
+  — place where the error occurred
+* `code` (`number`)
+  — machine readable code the error
 
 The following codes are used:
 
@@ -162,38 +210,15 @@ The following codes are used:
 | `6`  | `Foo &#128; baz`   | [Disallowed reference][invalid]               |
 | `7`  | `Foo &#xD800; baz` | Prohibited: outside permissible unicode range |
 
-#### `function text(value, position)`
-
-Text handler.
-
-###### Parameters
-
-* `this` (`*`) — refers to `textContext` when given to `parseEntities`
-* `value` (`string`) — string of content
-* `position` ([`Position`][position]) — place where `value` starts and ends
-
-#### `function reference(value, position, source)`
-
-Character reference handler.
-
-###### Parameters
-
-* `this` (`*`) — refers to `referenceContext` when given to `parseEntities`
-* `value` (`string`) — decoded character reference
-* `position` ([`Position`][position]) — place where `source` starts and ends
-* `source` (`string`) — raw source of character reference
-
-## Types
-
-This package is fully typed with [TypeScript][].
-It exports the additional types `Options`, `WarningHandler`,
-`ReferenceHandler`, and `TextHandler`.
-
 ## Compatibility
 
-This package is at least compatible with all maintained versions of Node.js.
-As of now, that is Node.js 14.14+ and 16.0+.
-It also works in Deno and modern browsers.
+This project is compatible with maintained versions of Node.js.
+
+When we cut a new major release,
+we drop support for unmaintained versions of Node.
+This means we try to keep the current release line,
+`parse-entities@4`,
+compatible with Node.js 16.
 
 ## Security
 
@@ -209,58 +234,62 @@ This package is safe: it matches the HTML spec to parse character references.
   — info on HTML4 character references
 * [`wooorm/character-entities-legacy`](https://github.com/wooorm/character-entities-legacy)
   — info on legacy character references
-* [`wooorm/character-reference-invalid`](https://github.com/wooorm/character-reference-invalid)
+* [`wooorm/character-reference-invalid`][invalid]
   — info on invalid numeric character references
 
 ## Contribute
 
 Yes please!
-See [How to Contribute to Open Source][contribute].
+See [How to Contribute to Open Source][opensource-guide-contribute].
 
 ## License
 
-[MIT][license] © [Titus Wormer][author]
+[MIT][file-license] © [Titus Wormer][wooorm]
 
 <!-- Definitions -->
 
-[build-badge]: https://github.com/wooorm/parse-entities/workflows/main/badge.svg
+[api-options]: #options
 
-[build]: https://github.com/wooorm/parse-entities/actions
+[api-parse-entities]: #parseentitiesvalue-options
 
-[coverage-badge]: https://img.shields.io/codecov/c/github/wooorm/parse-entities.svg
+[api-reference-handler]: #referencehandler
 
-[coverage]: https://codecov.io/github/wooorm/parse-entities
+[api-text-handler]: #texthandler
 
-[downloads-badge]: https://img.shields.io/npm/dm/parse-entities.svg
+[api-warning-handler]: #warninghandler
 
-[downloads]: https://www.npmjs.com/package/parse-entities
+[badge-build-image]: https://github.com/wooorm/parse-entities/workflows/main/badge.svg
 
-[size-badge]: https://img.shields.io/bundlephobia/minzip/parse-entities.svg
+[badge-build-url]: https://github.com/wooorm/parse-entities/actions
 
-[size]: https://bundlephobia.com/result?p=parse-entities
+[badge-coverage-image]: https://img.shields.io/codecov/c/github/wooorm/parse-entities.svg
 
-[npm]: https://docs.npmjs.com/cli/install
+[badge-coverage-url]: https://codecov.io/github/wooorm/parse-entities
+
+[badge-downloads-image]: https://img.shields.io/npm/dm/parse-entities.svg
+
+[badge-downloads-url]: https://www.npmjs.com/package/parse-entities
+
+[badge-size-image]: https://img.shields.io/bundlejs/size/parse-entities?exports=createStarryNight
+
+[badge-size-url]: https://bundlejs.com/?q=parse-entities
 
 [esmsh]: https://esm.sh
 
-[license]: license
+[file-license]: license
 
-[author]: https://wooorm.com
+[github-gist-esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 
-[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+[github-unist-point]: https://github.com/syntax-tree/unist#point
 
-[typescript]: https://www.typescriptlang.org
-
-[warning]: #function-warningreason-point-code
-
-[text]: #function-textvalue-position
-
-[reference]: #function-referencevalue-position-source
+[github-unist-position]: https://github.com/syntax-tree/unist#position
 
 [invalid]: https://github.com/wooorm/character-reference-invalid
 
-[point]: https://github.com/syntax-tree/unist#point
+[npmjs-install]: https://docs.npmjs.com/cli/install
 
-[position]: https://github.com/syntax-tree/unist#position
+[opensource-guide-contribute]: https://opensource.guide/how-to-contribute/
 
-[contribute]: https://opensource.guide/how-to-contribute/
+[typescript]: https://www.typescriptlang.org
+
+[wooorm]: https://wooorm.com

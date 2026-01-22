@@ -77,14 +77,14 @@ export interface Options<
    *
    * @default ''
    */
-  additional?: string | null | undefined
+  additional?: string | undefined
   /**
    * Whether to parse `value` as an attribute value.
    * This results in slightly different behavior.
    *
    * @default false
    */
-  attribute?: boolean | null | undefined
+  attribute?: boolean | undefined
   /**
    * Whether to allow nonterminated character references.
    * For example, `&copycat` for `©cat`.
@@ -92,35 +92,35 @@ export interface Options<
    *
    * @default true
    */
-  nonTerminated?: boolean | null | undefined
+  nonTerminated?: boolean | undefined
   /**
    * Starting `position` of `value` (`Point` or `Position`). Useful when dealing with values nested in some sort of syntax tree.
    */
-  position?: Readonly<Position> | Readonly<Point> | null | undefined
+  position?: Readonly<Position> | Readonly<Point> | undefined
   /**
    * Context used when calling `warning`.
    */
-  warningContext?: WarningContext | null | undefined
+  warningContext?: WarningContext | undefined
   /**
    * Context used when calling `reference`.
    */
-  referenceContext?: ReferenceContext | null | undefined
+  referenceContext?: ReferenceContext | undefined
   /**
    * Context used when calling `text`.
    */
-  textContext?: TextContext | null | undefined
+  textContext?: TextContext | undefined
   /**
    * Warning handler.
    */
-  warning?: WarningHandler<WarningContext> | null | undefined
+  warning?: WarningHandler<WarningContext> | undefined
   /**
    * Reference handler.
    */
-  reference?: ReferenceHandler<ReferenceContext> | null | undefined
+  reference?: ReferenceHandler<ReferenceContext> | undefined
   /**
    * Text handler.
    */
-  text?: TextHandler<TextContext> | null | undefined
+  text?: TextHandler<TextContext> | undefined
 }
 
 export {parseEntities} from './lib/index.js'
